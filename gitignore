@@ -1,2 +1,4 @@
 # plan files are temporary
 **/tfplan
+manifest.json
+packerlog.log
