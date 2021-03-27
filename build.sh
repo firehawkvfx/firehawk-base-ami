@@ -4,6 +4,7 @@ EXECDIR="$(pwd)"
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )" # The directory of this script
 echo "SCRIPTDIR: $SCRIPTDIR"
 cd $SCRIPTDIR
+source ../../../../update_vars.sh
 # source ../../../update_vars.sh
 # echo "SCRIPTDIR: $SCRIPTDIR"
 
