@@ -24,6 +24,10 @@ variable "resourcetier" {
   description = "The current environment ( dev / green / blue / main )"
   type        = string
 }
+variable "SSL_expiry" {
+  description = "The Expiry resulting from the TTL on the SSL Certificates"
+  type = string
+}
 
 locals {
   timestamp    = regex_replace(timestamp(), "[- TZ:]", "")
@@ -33,6 +37,7 @@ locals {
     "commit_hash" : var.commit_hash,
     "commit_hash_short" : var.commit_hash_short,
     "resourcetier" : var.resourcetier,
+    "sslexpiry": var.SSL_expiry
   }
 }
 
