@@ -62,6 +62,25 @@ source "amazon-ebs" "amazon-linux-2-ami" {
 
 }
 
+source "amazon-ebs" "amazonlinux2-nicedcv-nvidia-ami" {
+  tags            = merge({ "ami_role" : "amazonlinux2nicedcv_base_ami" }, local.common_ami_tags)
+  ami_description = "A Graphical NICE DCV NVIDIA Amazon Linux 2 AMI with basic updates."
+  # ami_name        = "firehawk-amazonlinux2-nicedcv-nvidia-ami-${local.timestamp}-{{uuid}}"
+  ami_name        = "firehawk-base-amazon-linux-2-nicedcv-${local.timestamp}-{{uuid}}"
+  # instance_type   = "g3s.xlarge" # Only required if testing a gpu.
+  instance_type   = "t2.micro"
+  region          = "${var.aws_region}"
+  source_ami_filter {
+    filters = {
+      name         = "DCV-AmazonLinux2-2020-2-9662-NVIDIA-450-89-x86_64"
+      product-code = "2jjfki9r556c6ky0h9l8kbom2"
+    }
+    most_recent = true
+    owners      = ["877902723034"]
+  }
+  ssh_username    = "ec2-user"
+}
+
 source "amazon-ebs" "centos7-ami" {
   tags            = merge({ "ami_role" : "centos7_base_ami" }, local.common_ami_tags)
   ami_description = "A Cent OS 7 AMI with basic updates."
@@ -129,6 +148,7 @@ build {
   sources = [
     "source.amazon-ebs.ubuntu18-ami",
     "source.amazon-ebs.amazon-linux-2-ami",
+    "source.amazon-ebs.amazonlinux2-nicedcv-nvidia-ami",
     "source.amazon-ebs.centos7-ami",
     "source.amazon-ebs.base-openvpn-server-ami",
   ]
@@ -207,7 +227,7 @@ build {
     inline = [
       "sudo yum update -y"
     ]
-    only = ["amazon-ebs.amazon-linux-2-ami", "amazon-ebs.centos7-ami"]
+    only = ["amazon-ebs.amazon-linux-2-ami", "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami", "amazon-ebs.centos7-ami"]
   }
 
   ### GIT ###
@@ -231,7 +251,7 @@ build {
       "sudo yum install -y git",
       "git --version"
     ]
-    only = ["amazon-ebs.amazon-linux-2-ami"]
+    only = ["amazon-ebs.amazon-linux-2-ami", "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami"]
   }
 
   ### Python 3 & PIP ###
@@ -257,7 +277,7 @@ build {
       "python3 -m pip install --user --upgrade pip",
       "python3 -m pip install --user boto3"
     ]
-    only = ["amazon-ebs.amazon-linux-2-ami", "amazon-ebs.centos7-ami"]
+    only = ["amazon-ebs.amazon-linux-2-ami", "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami", "amazon-ebs.centos7-ami"]
   }
 
   ### Cleanup
