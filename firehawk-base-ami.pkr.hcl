@@ -63,7 +63,7 @@ source "amazon-ebs" "amazonlinux2-ami" {
 }
 
 source "amazon-ebs" "amazonlinux2-nicedcv-nvidia-ami" {
-  tags            = merge({ "ami_role" : "amazonlinux2nicedcv_base_ami" }, local.common_ami_tags)
+  tags            = merge({ "ami_role" : "amazonlinux2_nicedcv_base_ami" }, local.common_ami_tags)
   ami_description = "A Graphical NICE DCV NVIDIA Amazon Linux 2 AMI with basic updates."
   # ami_name        = "firehawk-amazonlinux2-nicedcv-nvidia-ami-${local.timestamp}-{{uuid}}"
   ami_name        = "firehawk-base-amazonlinux2-nicedcv-${local.timestamp}-{{uuid}}"
