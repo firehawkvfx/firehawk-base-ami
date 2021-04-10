@@ -202,8 +202,8 @@ build {
     environment_vars = ["DEBIAN_FRONTEND=noninteractive"]
     valid_exit_codes = [0, 1] # ignore exit code.  this requirement is a bug in the open vpn ami.
     inline = [
-      "sudo apt-get -y install dialog; echo \"exit $?\"", # supressing exit code - until dialog is installed, apt-get may produce non zero exit codes. In open vpn ami
-      "sudo apt-get install -y -q; echo \"exit $?\""
+      "sudo DEBIAN_FRONTEND=noninteractive apt-get -y install dialog; echo \"exit $?\"", # supressing exit code - until dialog is installed, apt-get may produce non zero exit codes. In open vpn ami
+      "sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -q; echo \"exit $?\""
     ]
     inline_shebang = "/bin/bash -e"
     only           = ["amazon-ebs.base-openvpn-server-ami"]
@@ -215,9 +215,10 @@ build {
     inline_shebang   = "/bin/bash -e"
     environment_vars = ["DEBIAN_FRONTEND=noninteractive"]
     inline = [
-      "sudo apt-get -y update",
-      "sudo apt-get install dpkg -y",
-      "sudo apt-get --yes --force-yes -o Dpkg::Options::=\"--force-confdef\" -o Dpkg::Options::=\"--force-confold\" upgrade", # These args are required to fix a dpkg bug in the openvpn ami.
+      "sudo DEBIAN_FRONTEND=noninteractive apt-get update -y",
+      "sudo DEBIAN_FRONTEND=noninteractive apt-get update -y",
+      "sudo DEBIAN_FRONTEND=noninteractive apt-get install dpkg -y",
+      "sudo DEBIAN_FRONTEND=noninteractive apt-get --yes --force-yes -o Dpkg::Options::=\"--force-confdef\" -o Dpkg::Options::=\"--force-confold\" upgrade", # These args are required to fix a dpkg bug in the openvpn ami.
 
     ]
     only = ["amazon-ebs.ubuntu18-ami", "amazon-ebs.base-openvpn-server-ami"]
@@ -261,13 +262,13 @@ build {
     inline_shebang   = "/bin/bash -e"
     environment_vars = ["DEBIAN_FRONTEND=noninteractive"]
     inline = [
-      "sudo apt-get -y install python3",
-      "sudo apt-get -y install python-apt",
+      "sudo DEBIAN_FRONTEND=noninteractive apt-get -y install python3",
+      "sudo DEBIAN_FRONTEND=noninteractive apt-get -y install python-apt",
       "sudo apt install -y python3-pip",
       "python3 -m pip install --upgrade pip",
       "python3 -m pip install boto3",
       "python3 -m pip --version",
-      "sudo apt-get install -y git",
+      "sudo DEBIAN_FRONTEND=noninteractive apt-get install -y git",
       "echo '...Finished bootstrapping'"
     ]
     only = ["amazon-ebs.ubuntu18-ami", "amazon-ebs.base-openvpn-server-ami"]
