@@ -71,12 +71,13 @@ source "amazon-ebs" "amazonlinux2-nicedcv-nvidia-ami" {
   instance_type   = "t2.micro"
   region          = "${var.aws_region}"
   source_ami_filter {
-    filters = {
+    # To update - query:
+    # aws ec2 describe-images --filters Name=name,Values=DCV-AmazonLinux2-* --region $AWS_DEFAULT_REGION --query 'sort_by(Images, &CreationDate)[]'  
+    filters = { 
       name         = "DCV-AmazonLinux2-2020-2-9662-NVIDIA-450-89-x86_64"
-      product-code = "2jjfki9r556c6ky0h9l8kbom2"
     }
     most_recent = true
-    owners      = ["877902723034"]
+    owners      = ["877902723034"] # NICE DCV
   }
   ssh_username    = "ec2-user"
 }
