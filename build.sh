@@ -2,11 +2,9 @@
 
 EXECDIR="$(pwd)"
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )" # The directory of this script
-echo "SCRIPTDIR: $SCRIPTDIR"
 cd $SCRIPTDIR
-# source ../../../../update_vars.sh # cannot do this because of clift with SCRIPT_DIR
-# source ../../../update_vars.sh
-# echo "SCRIPTDIR: $SCRIPTDIR"
+source ../../../../update_vars.sh --sub-script --skip-find-amis
+SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )" # The directory of this script
 
 export AWS_DEFAULT_REGION=$(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone | sed 's/\(.*\)[a-z]/\1/')
 # AMI TAGS
