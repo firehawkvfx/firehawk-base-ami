@@ -1,11 +1,11 @@
 #!/bin/bash
 
+set -x
+
 EXECDIR="$(pwd)"
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )" # The directory of this script
 cd $SCRIPTDIR
 # source ../../../../update_vars.sh --sub-script --skip-find-amis
-SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )" # The directory of this script
-
 # AMI TAGS
 # Get the resourcetier from the instance tag.
 # export TF_VAR_instance_id_main_cloud9=$(curl http://169.254.169.254/latest/meta-data/instance-id)
@@ -23,6 +23,9 @@ export PKR_VAR_manifest_path="$SCRIPTDIR/manifest.json"
 
 mkdir -p $SCRIPTDIR/tmp/log
 rm -f $PKR_VAR_manifest_path
+
+ls
+
 packer build "$@" $SCRIPTDIR/firehawk-base-ami.pkr.hcl
 
 cd $EXECDIR
