@@ -262,12 +262,12 @@ build {
     inline_shebang   = "/bin/bash -e"
     environment_vars = ["DEBIAN_FRONTEND=noninteractive"]
     inline = [
-      "sudo DEBIAN_FRONTEND=noninteractive apt-get -y install python3",
+      "sudo DEBIAN_FRONTEND=noninteractive apt-get -y install python3.7",
       "sudo DEBIAN_FRONTEND=noninteractive apt-get -y install python-apt",
       "sudo apt install -y python3-pip",
-      "python3 -m pip install --upgrade pip",
-      "python3 -m pip install boto3",
-      "python3 -m pip --version",
+      "python3.7 -m pip install --upgrade pip",
+      "python3.7 -m pip install boto3",
+      "python3.7 -m pip --version",
       "sudo DEBIAN_FRONTEND=noninteractive apt-get install -y git",
       "echo '...Finished bootstrapping'"
     ]
@@ -275,9 +275,9 @@ build {
   }
   provisioner "shell" {
     inline = [
-      "sudo yum install -y python python3.8 python3-pip",
-      "python3 -m pip install --user --upgrade pip",
-      "python3 -m pip install --user boto3"
+      "sudo yum install -y python python3.7 python3-pip", #: python 3.8 is not available for centos 7.  TODO: Deprecate centos.
+      "python3.7 -m pip install --user --upgrade pip",
+      "python3.7 -m pip install --user boto3"
     ]
     only = ["amazon-ebs.amazonlinux2-ami", "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami", "amazon-ebs.centos7-ami"]
   }
