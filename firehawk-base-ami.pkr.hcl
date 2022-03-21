@@ -275,7 +275,7 @@ build {
   }
   provisioner "shell" {
     inline = [
-      "sudo yum install -y python python3.7 python3-pip",
+      "sudo yum install -y python python3.8 python3-pip",
       "python3 -m pip install --user --upgrade pip",
       "python3 -m pip install --user boto3"
     ]
