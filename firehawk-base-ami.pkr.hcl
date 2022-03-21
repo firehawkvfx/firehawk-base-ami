@@ -275,9 +275,9 @@ build {
   }
   provisioner "shell" {
     inline = [
-      "sudo yum install -y python python3.7 python3-pip", #: python 3.8 is not available for centos 7.  TODO: Deprecate centos.
-      "python3.7 -m pip install --user --upgrade pip",
-      "python3.7 -m pip install --user boto3"
+      "sudo yum install -y python python3.7 python3-pip",
+      "python3 -m pip install --user --upgrade pip",
+      "python3 -m pip install --user boto3"
     ]
     only = ["amazon-ebs.amazonlinux2-ami", "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami", "amazon-ebs.centos7-ami"]
   }
