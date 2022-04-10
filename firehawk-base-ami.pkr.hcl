@@ -294,6 +294,26 @@ build {
     only = ["amazon-ebs.amazonlinux2-ami", "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami", "amazon-ebs.centos7-ami"]
   }
 
+  provisioner "shell" {
+    ### AWS CLI
+    inline = [
+      # "python3 -m pip install --user --upgrade awscli",
+      "curl \"https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.5.4.zip\" -o \"awscliv2.zip\"",
+      "unzip -q awscliv2.zip",
+      "sudo ./aws/install -b /usr/local/bin",
+      "/usr/local/bin/aws --version",
+      # Test that the cli can make a request to s3
+      "echo \"awscli test request: $(aws s3api head-object --bucket thinkbox-installers --key Deadline/10.1.18.5/Linux/Deadline-10.1.18.5-linux-installers.tar)\"",
+    ]
+    only = [
+      "amazon-ebs.centos7-ami",
+      "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami",
+      "amazon-ebs.amazonlinux2-ami",
+      "amazon-ebs.base-openvpn-server-ami",
+      "amazon-ebs.ubuntu18-ami"
+    ]
+  }
+
   ### Cleanup
   provisioner "shell" {
     inline_shebang   = "/bin/bash -e"
