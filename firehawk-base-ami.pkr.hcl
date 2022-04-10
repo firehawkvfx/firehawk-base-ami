@@ -82,6 +82,16 @@ source "amazon-ebs" "amazonlinux2-nicedcv-nvidia-ami" {
   ssh_username    = "ec2-user"
 }
 
+# its possible to quire the latest ami with this filter
+# aws ec2 describe-images \
+#   --owners 679593333241 \
+#   --filters \
+#       Name=name,Values='CentOS Linux 7 x86_64 HVM EBS*' \
+#       Name=architecture,Values=x86_64 \
+#       Name=root-device-type,Values=ebs \
+#   --query 'sort_by(Images, &Name)[-1].ImageId' \
+#   --output text
+
 source "amazon-ebs" "centos7-ami" {
   tags            = merge({ "ami_role" : "centos7_base_ami" }, local.common_ami_tags)
   ami_description = "A Cent OS 7 AMI with basic updates."
@@ -91,7 +101,9 @@ source "amazon-ebs" "centos7-ami" {
   source_ami_filter {
     filters = {
       name         = "CentOS Linux 7 x86_64 HVM EBS *"
-      product-code = "aw0evgkw8e5c1q413zgy5pjce"
+      architecture = "x86_64"
+      root-device-type = "ebs"
+      # product-code = "aw0evgkw8e5c1q413zgy5pjce"
     }
     most_recent = true
     owners      = ["679593333241"]
