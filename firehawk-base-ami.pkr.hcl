@@ -307,8 +307,8 @@ build {
     ]
     only = [
       "amazon-ebs.centos7-ami",
-      "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami",
-      "amazon-ebs.amazonlinux2-ami",
+      # "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami", # already installed.  otherwwise need to silence error
+      # "amazon-ebs.amazonlinux2-ami",
       "amazon-ebs.base-openvpn-server-ami",
       "amazon-ebs.ubuntu18-ami"
     ]
