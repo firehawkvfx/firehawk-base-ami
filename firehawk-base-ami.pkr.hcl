@@ -274,8 +274,7 @@ build {
     inline_shebang   = "/bin/bash -e"
     environment_vars = ["DEBIAN_FRONTEND=noninteractive"]
     inline = [
-      "sudo DEBIAN_FRONTEND=noninteractive apt-get -y install python3",
-      "sudo DEBIAN_FRONTEND=noninteractive apt-get -y install python-apt",
+      "sudo DEBIAN_FRONTEND=noninteractive apt-get -y install python3 python-apt unzip jq",
       "sudo apt install -y python3-pip",
       "python3 -m pip install --upgrade pip",
       "python3 -m pip install boto3",
@@ -287,7 +286,7 @@ build {
   }
   provisioner "shell" {
     inline = [
-      "sudo yum install -y python python3.7 python3-pip",
+      "sudo yum install -y python python3.7 python3-pip unzip jq",
       "python3 -m pip install --user --upgrade pip",
       "python3 -m pip install --user boto3"
     ]
