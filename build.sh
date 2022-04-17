@@ -26,6 +26,6 @@ rm -f $PKR_VAR_manifest_path
 
 ls
 
-packer build "$@" $SCRIPTDIR/firehawk-base-ami.pkr.hcl
+packer build "$@" $SCRIPTDIR/firehawk-base-ami.pkr.hcl -only "amazon-ebs.centos7-ami"
 
 cd $EXECDIR
