@@ -301,7 +301,7 @@ build {
       "unzip -q awscliv2.zip",
       "sudo ./aws/install -b /usr/local/bin",
       "/usr/local/bin/aws --version",
-      "sudo test -f /bin/aws; then sudo rm -f /bin/aws; fi" # Ensure aws CLI v1 doesn't exist
+      "if sudo test -f /bin/aws; then sudo rm -f /bin/aws; fi" # Ensure aws CLI v1 doesn't exist
       # Test that the cli can make a request to s3
       # "echo \"awscli test request: $(aws s3api head-object --bucket thinkbox-installers --key Deadline/10.1.18.5/Linux/Deadline-10.1.18.5-linux-installers.tar)\"",
     ]
