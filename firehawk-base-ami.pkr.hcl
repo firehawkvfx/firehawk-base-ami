@@ -302,8 +302,6 @@ build {
       "sudo ./aws/install -b /usr/local/bin",
       "aws --version",
       "if sudo test -f /bin/aws; then sudo rm -f /bin/aws; fi" # Ensure AWS CLI v1 doesn't exist
-      # Test that the cli can make a request to s3
-      # "echo \"awscli test request: $(aws s3api head-object --bucket thinkbox-installers --key Deadline/10.1.18.5/Linux/Deadline-10.1.18.5-linux-installers.tar)\"",
     ]
     only = [
       "amazon-ebs.centos7-ami",
