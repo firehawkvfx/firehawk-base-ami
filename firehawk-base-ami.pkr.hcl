@@ -297,16 +297,16 @@ build {
     ### AWS CLI
     inline = [
       # "python3 -m pip install --user --upgrade awscli",
+      "if sudo test -f /bin/aws; then sudo rm -f /bin/aws; fi", # Ensure AWS CLI v1 doesn't exist
       "curl \"https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.5.4.zip\" -o \"awscliv2.zip\"",
       "unzip -q awscliv2.zip",
       "sudo ./aws/install -b /usr/local/bin",
-      "aws --version",
-      "if sudo test -f /bin/aws; then sudo rm -f /bin/aws; fi" # Ensure AWS CLI v1 doesn't exist
+      "aws --version"
     ]
     only = [
       "amazon-ebs.centos7-ami",
-      # "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami", # already installed.  otherwwise need to silence error
-      # "amazon-ebs.amazonlinux2-ami",
+      "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami", # already installed.  otherwise need to silence error
+      "amazon-ebs.amazonlinux2-ami",
       "amazon-ebs.base-openvpn-server-ami",
       "amazon-ebs.ubuntu18-ami"
     ]
