@@ -299,7 +299,7 @@ build {
       # "python3 -m pip install --user --upgrade awscli",
       "if [[ -n \"$(command -v yum)\" ]]; then sudo yum remove awscli -y; fi", # uninstall AWS CLI v1
       "if [[ -n \"$(command -v apt-get)\" ]]; then sudo apt-get remove awscli -y; fi", # uninstall AWS CLI v1
-      "if sudo test -f /bin/aws; then sudo rm -f /bin/aws; fi" # Ensure AWS CLI v1 doesn't exist
+      "if sudo test -f /bin/aws; then sudo rm -f /bin/aws; fi", # Ensure AWS CLI v1 doesn't exist
       "curl \"https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.5.4.zip\" -o \"awscliv2.zip\"",
       "unzip -q awscliv2.zip",
       "sudo ./aws/install -b /usr/local/bin",
