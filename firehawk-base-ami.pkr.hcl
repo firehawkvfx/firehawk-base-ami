@@ -294,6 +294,8 @@ build {
   }
 
   provisioner "shell" {
+    inline_shebang   = "/bin/bash -e"
+    environment_vars = ["DEBIAN_FRONTEND=noninteractive"]
     ### AWS CLI
     inline = [
       # "python3 -m pip install --user --upgrade awscli",
