@@ -26,6 +26,7 @@ rm -f $PKR_VAR_manifest_path
 
 ls
 
-packer build "$@" -only=amazon-ebs.ubuntu18-ami $SCRIPTDIR/firehawk-base-ami.pkr.hcl
+packer build "$@" $SCRIPTDIR/firehawk-base-ami.pkr.hcl
+# packer build "$@" -only=amazon-ebs.ubuntu18-ami $SCRIPTDIR/firehawk-base-ami.pkr.hcl
 
 cd $EXECDIR
