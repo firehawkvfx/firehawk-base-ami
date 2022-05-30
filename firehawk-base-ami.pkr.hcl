@@ -26,7 +26,7 @@ variable "resourcetier" {
 }
 variable "SSL_expiry" {
   description = "The Expiry resulting from the TTL on the SSL Certificates"
-  type = string
+  type        = string
 }
 
 locals {
@@ -37,16 +37,20 @@ locals {
     "commit_hash" : var.commit_hash,
     "commit_hash_short" : var.commit_hash_short,
     "resourcetier" : var.resourcetier,
-    "sslexpiry": var.SSL_expiry
+    "sslexpiry" : var.SSL_expiry
   }
 }
 
 source "amazon-ebs" "amazonlinux2-ami" {
-  tags            = merge({ "ami_role" : "amazonlinux2_base_ami" }, local.common_ami_tags)
+  tags = merge(
+    { "packer_source" : "amazon-ebs.amazonlinux2-ami" },
+    { "Name" : "amazonlinux2_base_ami" },
+    { "ami_role" : "amazonlinux2_base_ami" },
+  local.common_ami_tags)
   ami_description = "An Amazon Linux 2 AMI with basic updates."
   ami_name        = "firehawk-base-amazonlinux2-${local.timestamp}-{{uuid}}"
   instance_type   = "t2.micro"
-  region          = "${var.aws_region}"
+  region          = var.aws_region
   source_ami_filter {
     filters = {
       architecture                       = "x86_64"
@@ -63,23 +67,28 @@ source "amazon-ebs" "amazonlinux2-ami" {
 }
 
 source "amazon-ebs" "amazonlinux2-nicedcv-nvidia-ami" {
-  tags            = merge({ "ami_role" : "amazonlinux2_nicedcv_base_ami" }, local.common_ami_tags)
+  tags = merge(
+    { "packer_source" : "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami" },
+    { "Name" : "amazonlinux2_nicedcv_base_ami" },
+    { "ami_role" : "amazonlinux2_nicedcv_base_ami" },
+    local.common_ami_tags
+  )
   ami_description = "A Graphical NICE DCV NVIDIA Amazon Linux 2 AMI with basic updates."
   # ami_name        = "firehawk-amazonlinux2-nicedcv-nvidia-ami-${local.timestamp}-{{uuid}}"
-  ami_name        = "firehawk-base-amazonlinux2-nicedcv-${local.timestamp}-{{uuid}}"
+  ami_name = "firehawk-base-amazonlinux2-nicedcv-${local.timestamp}-{{uuid}}"
   # instance_type   = "g3s.xlarge" # Only required if testing a gpu.
-  instance_type   = "t2.micro"
-  region          = "${var.aws_region}"
+  instance_type = "t2.micro"
+  region        = var.aws_region
   source_ami_filter {
     # To update - query:
     # aws ec2 describe-images --filters Name=name,Values=DCV-AmazonLinux2-* --region $AWS_DEFAULT_REGION --query 'sort_by(Images, &CreationDate)[]'  
-    filters = { 
-      name         = "DCV-AmazonLinux2-2020-2-9662-NVIDIA-450-89-x86_64"
+    filters = {
+      name = "DCV-AmazonLinux2-2020-2-9662-NVIDIA-450-89-x86_64"
     }
     most_recent = true
     owners      = ["877902723034"] # NICE DCV
   }
-  ssh_username    = "ec2-user"
+  ssh_username = "ec2-user"
 }
 
 # its possible to quire the latest ami with this filter
@@ -93,15 +102,20 @@ source "amazon-ebs" "amazonlinux2-nicedcv-nvidia-ami" {
 #   --output text
 
 source "amazon-ebs" "centos7-ami" {
-  tags            = merge({ "ami_role" : "centos7_base_ami" }, local.common_ami_tags)
+  tags = merge(
+    { "packer_source" : "amazon-ebs.centos7-ami" },
+    { "Name" : "centos7_base_ami" },
+    { "ami_role" : "centos7_base_ami" },
+    local.common_ami_tags
+  )
   ami_description = "A Cent OS 7 AMI with basic updates."
   ami_name        = "firehawk-base-centos7-${local.timestamp}-{{uuid}}"
   instance_type   = "t2.micro"
-  region          = "${var.aws_region}"
+  region          = var.aws_region
   source_ami_filter {
     filters = {
-      name         = "CentOS Linux 7 x86_64 HVM EBS *"
-      architecture = "x86_64"
+      name             = "CentOS Linux 7 x86_64 HVM EBS *"
+      architecture     = "x86_64"
       root-device-type = "ebs"
       # product-code = "aw0evgkw8e5c1q413zgy5pjce"
     }
@@ -114,11 +128,16 @@ source "amazon-ebs" "centos7-ami" {
 }
 
 source "amazon-ebs" "ubuntu18-ami" {
-  tags            = merge({ "ami_role" : "ubuntu18_base_ami" }, local.common_ami_tags)
+  tags = merge(
+    { "packer_source" : "amazon-ebs.ubuntu18-ami" },
+    { "Name" : "ubuntu18_base_ami" },
+    { "ami_role" : "ubuntu18_base_ami" },
+    local.common_ami_tags
+  )
   ami_description = "An Ubuntu 18.04 AMI with basic updates."
   ami_name        = "firehawk-base-ubuntu18-${local.timestamp}-{{uuid}}"
   instance_type   = "t2.micro"
-  region          = "${var.aws_region}"
+  region          = var.aws_region
   source_ami_filter {
     filters = {
       architecture                       = "x86_64"
@@ -135,11 +154,16 @@ source "amazon-ebs" "ubuntu18-ami" {
 }
 
 source "amazon-ebs" "base-openvpn-server-ami" {
-  tags            = merge({ "ami_role" : "openvpn_server_base_ami" }, local.common_ami_tags)
+  tags = merge(
+    { "packer_source" : "amazon-ebs.base-openvpn-server-ami" },
+    { "Name" : "openvpn_server_base_ami" },
+    { "ami_role" : "openvpn_server_base_ami" },
+    local.common_ami_tags
+  )
   ami_description = "An Open VPN Access Server AMI with basic updates"
   ami_name        = "firehawk-base-openvpn-server-${local.timestamp}-{{uuid}}"
   instance_type   = "t2.micro"
-  region          = "${var.aws_region}"
+  region          = var.aws_region
   user_data       = <<EOF
 #! /bin/bash
 admin_user=openvpnas
@@ -299,9 +323,9 @@ build {
     ### AWS CLI
     inline = [
       # "python3 -m pip install --user --upgrade awscli",
-      "if [[ -n \"$(command -v yum)\" ]]; then sudo yum remove awscli -y; fi", # uninstall AWS CLI v1
+      "if [[ -n \"$(command -v yum)\" ]]; then sudo yum remove awscli -y; fi",         # uninstall AWS CLI v1
       "if [[ -n \"$(command -v apt-get)\" ]]; then sudo apt-get remove awscli -y; fi", # uninstall AWS CLI v1
-      "if sudo test -f /bin/aws; then sudo rm -f /bin/aws; fi", # Ensure AWS CLI v1 doesn't exist
+      "if sudo test -f /bin/aws; then sudo rm -f /bin/aws; fi",                        # Ensure AWS CLI v1 doesn't exist
       "curl \"https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.5.4.zip\" -o \"awscliv2.zip\"",
       "unzip -q awscliv2.zip",
       "sudo ./aws/install -b /usr/local/bin",
