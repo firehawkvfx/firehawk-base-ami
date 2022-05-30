@@ -62,8 +62,8 @@ function error_if_empty {
 
 
 ### Idempotency logic: exit if all images exist
-error_if_empty "Missing: PKR_VAR_commit_hash_short: $PKR_VAR_commit_hash_short"
-error_if_empty "Missing: build_list: $build_list"
+error_if_empty "Missing: PKR_VAR_commit_hash_short:" "$PKR_VAR_commit_hash_short"
+error_if_empty "Missing: build_list:" "$build_list"
 
 ami_query=$(aws ec2 describe-images --owners self --filters "Name=tag:commit_hash_short,Values=[$PKR_VAR_commit_hash_short]" --query "Images[*].{ImageId:ImageId,date:CreationDate,Name:Name,SnapshotId:BlockDeviceMappings[0].Ebs.SnapshotId,commit_hash_short:[Tags[?Key=='commit_hash_short']][0][0].Value,packer_source:[Tags[?Key=='packer_source']][0][0].Value}")
 
