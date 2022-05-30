@@ -97,12 +97,12 @@ echo "Packer will erase all images for this commit hash and rebuild all images"
 $SCRIPTDIR/delete-all-old-amis.sh --commit-hash-short-list $PKR_VAR_commit_hash_short --auto-approve
 
 # Validate
-packer validate "$@" -var "ca_public_key_path=$HOME/.ssh/tls/ca.crt.pem" \
+packer validate "$@" \
   -only=$build_list \
   $SCRIPTDIR/firehawk-base-ami.pkr.hcl
 
 # Build
-packer build "$@" -var "ca_public_key_path=$HOME/.ssh/tls/ca.crt.pem" \
+packer build "$@" \
   -only=$build_list \
   $SCRIPTDIR/firehawk-base-ami.pkr.hcl
 

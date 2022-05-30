@@ -95,14 +95,17 @@ function main {
       esac
     fi
     
-    echo "...Deleting images"
-    # aws ec2 deregister-image --image-id $ami_delete_list
+    echo "...Deleting images:"
+    echo "$ami_delete_list"
+
     for i in $ami_delete_list; do
         echo "Delete: $i"
         aws ec2 deregister-image --image-id $i
     done
 
-    echo "...Deleting snapshots"
+    echo "...Deleting snapshots:"
+    echo "$snap_delete_list"
+
     for i in $snap_delete_list; do
         echo "Delete: $i"
         aws ec2 delete-snapshot --snapshot-id $i
