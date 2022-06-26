@@ -4,6 +4,7 @@
 # Some AMI's may require fixes to resolves bugs which are also performed here (Centos 7, Open VPN).
 # We also install any packages that will not likely require frequent modification (Python, Git).  If they do require significant/frequent/unreliable modification they do not belong here.
 
+
 variable "aws_region" {
   type    = string
   default = null
