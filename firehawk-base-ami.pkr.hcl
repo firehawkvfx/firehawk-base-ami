@@ -77,7 +77,7 @@ source "amazon-ebs" "amazonlinux2-nicedcv-nvidia-ami" {
   region        = var.aws_region
   source_ami_filter {
     # To update - query:
-    # aws ec2 describe-images --filters Name=name,Values=DCV-AmazonLinux2-* --region $AWS_DEFAULT_REGION --query 'sort_by(Images, &CreationDate)[]'  
+    # aws ec2 describe-images --filters Name=name,Values=DCV-AmazonLinux2-* --region $AWS_DEFAULT_REGION --query 'sort_by(Images, &CreationDate)[]'
     filters = {
       name = "DCV-AmazonLinux2-2020-2-9662-NVIDIA-450-89-x86_64"
     }
@@ -110,7 +110,7 @@ source "amazon-ebs" "centos7-ami" {
   region          = var.aws_region
   source_ami_filter {
     filters = {
-      name             = "CentOS Linux 7 x86_64 HVM EBS *"
+      name             = "CentOS-7-*-*.x86_64-*"
       architecture     = "x86_64"
       root-device-type = "ebs"
       # product-code = "aw0evgkw8e5c1q413zgy5pjce"
