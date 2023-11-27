@@ -167,7 +167,7 @@ admin_pw=''
 EOF
   source_ami_filter {
     filters = {
-      description  = "OpenVPN Access Server 2.8.3 publisher image from https://www.openvpn.net/."
+      description  = "OpenVPN Access Server 2.11.3 publisher image from https://www.openvpn.net/."
       product-code = "f2ew2wrz425a1jagnifd02u5t"
     }
     most_recent = true
