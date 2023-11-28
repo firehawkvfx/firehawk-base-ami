@@ -13,12 +13,10 @@ done
 SCRIPTDIR=$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)
 cd $SCRIPTDIR
 
-
 ### Vars
 build_list="amazon-ebs.ubuntu18-ami,\
 amazon-ebs.amazonlinux2-ami,\
-amazon-ebs.centos7-ami,\
-amazon-ebs.base-openvpn-server-ami"
+amazon-ebs.centos7-ami"
 
 # amazon-ebs.amazonlinux2-nicedcv-nvidia-ami,\
 
@@ -37,7 +35,7 @@ function log {
   local -r level="$1"
   local -r message="$2"
   local -r timestamp=$(date +"%Y-%m-%d %H:%M:%S")
-  >&2 echo -e "${timestamp} [${level}] [$SCRIPT_NAME] ${message}"
+  echo >&2 -e "${timestamp} [${level}] [$SCRIPT_NAME] ${message}"
 }
 
 function log_info {
@@ -62,7 +60,6 @@ function error_if_empty {
   return
 }
 
-
 ### Idempotency logic: exit if all images exist
 error_if_empty "Missing: PKR_VAR_commit_hash_short:" "$PKR_VAR_commit_hash_short"
 error_if_empty "Missing: build_list:" "$build_list"
@@ -71,10 +68,10 @@ ami_query=$(aws ec2 describe-images --owners self --filters "Name=tag:commit_has
 
 total_built_images=$(echo $ami_query | jq -r '. | length')
 
-missing_images_for_hash=$(echo $ami_query \
-| jq -r '
-  .[].packer_source' \
-| jq --arg BUILDLIST "$build_list" --slurp --raw-input 'split("\n")[:-1] as $existing_names 
+missing_images_for_hash=$(echo $ami_query |
+  jq -r '
+  .[].packer_source' |
+  jq --arg BUILDLIST "$build_list" --slurp --raw-input 'split("\n")[:-1] as $existing_names
 | ($existing_names | unique) as $existing_names_set
 | ($BUILDLIST | split(",") | unique) as $intended_names_set
 | $intended_names_set - $existing_names_set
@@ -93,12 +90,10 @@ if [[ "$count_missing_images_for_hash" -eq 0 ]]; then
   exit 0
 fi
 
-
 ### Packer profile
 # export PKR_VAR_provisioner_iam_profile_name="$(terragrunt output instance_profile_name)"
 echo "Using profile: $PKR_VAR_provisioner_iam_profile_name"
 error_if_empty "Missing: PKR_VAR_provisioner_iam_profile_name" "$PKR_VAR_provisioner_iam_profile_name"
-
 
 # If sourced, dont execute
 (return 0 2>/dev/null) && sourced=1 || sourced=0
