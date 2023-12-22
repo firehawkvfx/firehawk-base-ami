@@ -14,20 +14,44 @@ SCRIPTDIR=$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)
 cd $SCRIPTDIR
 
 ### Vars
-build_list="amazon-ebs.ubuntu18-ami,\
-amazon-ebs.amazonlinux2-ami,\
-amazon-ebs.centos7-ami"
 
-# amazon-ebs.amazonlinux2-nicedcv-nvidia-ami,\
+# You can build a single AMI to test by modifying this list.
+# Deployment will require all items in the list.
+
+if [[ $1 == "firehawk-base-ami" ]]; then
+  export PKR_VAR_ami_role="firehawk-base-ami"
+  # primary amis to build:
+  build_list="amazon-ebs.ubuntu18-ami,\
+  amazon-ebs.amazonlinux2-ami,\
+  amazon-ebs.centos7-ami"
+elif [[ $1 == "firehawk-ami" ]]; then
+  export PKR_VAR_ami_role="firehawk-ami"
+  # secondary amis to build
+  build_list="amazon-ebs.amazonlinux2-ami,\
+  amazon-ebs.centos7-ami,\
+  amazon-ebs.centos7-rendernode-ami,\
+  amazon-ebs.ubuntu18-ami,\
+  amazon-ebs.ubuntu18-vault-consul-server-ami,\
+  amazon-ebs.deadline-db-ubuntu18-ami"
+else
+  log_error "Invalid argument: $1"
+  exit 1
+fi
+
+# build_list=$1
 
 export PKR_VAR_resourcetier="$TF_VAR_resourcetier"
-export PKR_VAR_ami_role="firehawk-base-ami"
 export PKR_VAR_commit_hash="$(git rev-parse HEAD)"
 export PKR_VAR_commit_hash_short="$(git rev-parse --short HEAD)"
 export PKR_VAR_aws_region="$AWS_DEFAULT_REGION"
 export PACKER_LOG=1
 export PACKER_LOG_PATH="$SCRIPTDIR/packerlog.log"
 export PKR_VAR_manifest_path="$SCRIPTDIR/manifest.json"
+
+cd $SCRIPTDIR/../firehawk-base-ami
+export PKR_VAR_ingress_commit_hash="$(git rev-parse HEAD)" # the commit hash for incoming amis
+export PKR_VAR_ingress_commit_hash_short="$(git rev-parse --short HEAD)"
+cd $SCRIPTDIR
 
 echo "Building AMI's for deployment: $PKR_VAR_ami_role"
 
@@ -95,6 +119,26 @@ fi
 echo "Using profile: $PKR_VAR_provisioner_iam_profile_name"
 error_if_empty "Missing: PKR_VAR_provisioner_iam_profile_name" "$PKR_VAR_provisioner_iam_profile_name"
 
+if [[ $1 == "firehawk-ami" ]]; then
+  ### Software Bucket
+  # export PKR_VAR_installers_bucket="$(terragrunt output installers_bucket)"
+  echo "Using installers bucket: $PKR_VAR_installers_bucket"
+  error_if_empty "Missing: PKR_VAR_installers_bucket" "$PKR_VAR_installers_bucket"
+  cd $SCRIPTDIR
+
+  # Retrieve secretsmanager secrets
+  sesi_client_secret_key_path="/firehawk/resourcetier/${TF_VAR_resourcetier}/sesi_client_secret_key"
+  get_secret_strings=$(aws secretsmanager get-secret-value --secret-id "$sesi_client_secret_key_path")
+  if [[ $? -eq 0 ]]; then
+    export TF_VAR_sesi_client_secret_key=$(echo $get_secret_strings | jq ".SecretString" --raw-output)
+    error_if_empty "Secretsmanager secret missing: TF_VAR_sesi_client_secret_key" "$TF_VAR_sesi_client_secret_key"
+    export PKR_VAR_sesi_client_secret_key="$TF_VAR_sesi_client_secret_key"
+  else
+    log_error "Error retrieving: $sesi_client_secret_key_path"
+    return
+  fi
+fi
+
 # If sourced, dont execute
 (return 0 2>/dev/null) && sourced=1 || sourced=0
 echo "Script sourced: $sourced"
@@ -113,21 +157,73 @@ if [[ $total_built_images -gt 0 ]]; then
   $SCRIPTDIR/delete-all-old-amis.sh --commit-hash-short-list $PKR_VAR_commit_hash_short --auto-approve
 fi
 
-# Validate
-packer validate "$@" \
-  -only=$build_list \
-  $SCRIPTDIR/firehawk-base-ami.pkr.hcl
+if [[ $1 == "firehawk-base-ami" ]]; then
+  # Validate
+  packer validate "$@" \
+    -only=$build_list \
+    $SCRIPTDIR/firehawk-base-ami.pkr.hcl
 
-# Prepare for build.
-# Ansible log path
-mkdir -p "$SCRIPTDIR/tmp/log"
-# Clear previous manifest
-rm -f $PKR_VAR_manifest_path
+  # Prepare for build.
+  # Ansible log path
+  mkdir -p "$SCRIPTDIR/tmp/log"
+  # Clear previous manifest
+  rm -f $PKR_VAR_manifest_path
 
-# Build
-packer build "$@" \
-  -only=$build_list \
-  $SCRIPTDIR/firehawk-base-ami.pkr.hcl
+  # Build
+  packer build "$@" \
+    -only=$build_list \
+    $SCRIPTDIR/firehawk-base-ami.pkr.hcl
+elif [[ $1 == "firehawk-ami" ]]; then
+
+  # Prepare for build.
+  # Ansible log path
+  mkdir -p "$SCRIPTDIR/tmp/log"
+  # Clear previous manifest
+  rm -f $PKR_VAR_manifest_path
+
+  # Ensure certs exist for Consul and Vault
+  $SCRIPTDIR/../../init/init
+  if [[ -f "$TF_VAR_ca_public_key_file_path" ]]; then
+    export SSL_expiry=$(cat "$TF_VAR_ca_public_key_file_path" | openssl x509 -noout -enddate | awk -F "=" '{print $2}')
+    # export PKR_VAR_SSL_expiry="$TF_VAR_SSL_expiry"
+    echo "Current SSL Certificates will expire at: $SSL_expiry"
+  else
+    echo "Warning: No SSL Certifcates exist."
+  fi
+
+  # Validate
+  packer validate "$@" \
+    -var "ca_public_key_path=$HOME/.ssh/tls/ca.crt.pem" \
+    -var "tls_public_key_path=$HOME/.ssh/tls/vault.crt.pem" \
+    -var "tls_private_key_path=$HOME/.ssh/tls/vault.key.pem" \
+    -var "SSL_expiry=$SSL_expiry" \
+    -only=$build_list \
+    $SCRIPTDIR/firehawk-ami.pkr.hcl
+
+  # Build
+  packer build "$@" \
+    -var "ca_public_key_path=$HOME/.ssh/tls/ca.crt.pem" \
+    -var "tls_public_key_path=$HOME/.ssh/tls/vault.crt.pem" \
+    -var "tls_private_key_path=$HOME/.ssh/tls/vault.key.pem" \
+    -var "SSL_expiry=$SSL_expiry" \
+    -only=$build_list \
+    $SCRIPTDIR/firehawk-ami.pkr.hcl
+
+  # Track the houdini build by adding an extra tag to the AMI.
+  # ...Since the build version downloaded cannot always be known until after install.
+  if test -f /tmp/houdini_download_result.txt; then
+    echo "Get downloadeded versions to tag ami from: /tmp/houdini_download_result.txt"
+    cat /tmp/houdini_download_result.txt
+    echo "Parse manfiest content: $PKR_VAR_manifest_path"
+    jq . $PKR_VAR_manifest_path
+    houdini_ami_to_update="$(jq -r '.builds[] | select(.name=="centos7-rendernode-ami").artifact_id | split(":")[-1]' $PKR_VAR_manifest_path)"
+    result_houdini_build="$(cat /tmp/houdini_download_result.txt)"
+    echo "Add tag: houdini_build=$result_houdini_build to ami: $houdini_ami_to_update"
+    aws ec2 create-tags \
+      --resources $houdini_ami_to_update --tags Key=houdini_build,Value=$result_houdini_build
+  fi
+
+fi
 
 cd $EXECDIR
 set +e
