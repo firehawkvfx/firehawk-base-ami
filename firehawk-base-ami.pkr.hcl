@@ -336,6 +336,16 @@ build {
     ]
   }
 
+  # Upgrade kernel for centos 7 - may be needed for Nebula to function
+  provisioner "shell" {
+    inline_shebang   = "/bin/bash -e"
+    environment_vars = ["DEBIAN_FRONTEND=noninteractive"]
+    inline = [
+      "sudo yum install kernel -y"
+    ]
+    only = ["amazon-ebs.centos7-ami"]
+  }
+
   ### Cleanup
   provisioner "shell" {
     inline_shebang   = "/bin/bash -e"
