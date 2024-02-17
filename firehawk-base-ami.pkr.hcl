@@ -333,6 +333,7 @@ build {
   provisioner "shell" {
     inline_shebang   = "/bin/bash -e"
     inline = [
+      "echo \"Installing Nebula...\"",
       "sudo mkdir -p /etc/nebula",
       "cd /etc/nebula",
       "wget -q https://github.com/slackhq/nebula/releases/download/v1.7.2/nebula-linux-386.tar.gz",
@@ -344,7 +345,7 @@ build {
   provisioner "shell" {
     inline_shebang   = "/bin/bash -e"
     inline = [
-      "Installing Nebula",
+      "echo \"Installing Nebula...\"",
       "sudo mkdir -p /etc/nebula",
       "cd /etc/nebula",
       "wget -q https://github.com/slackhq/nebula/releases/download/v1.7.2/nebula-linux-amd64.tar.gz",
