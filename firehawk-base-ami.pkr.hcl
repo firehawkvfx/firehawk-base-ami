@@ -323,6 +323,13 @@ build {
 
   provisioner "shell" {
     inline = [
+      "sudo apt-get install -y unzip wget"
+    ]
+    only = ["amazon-ebs.ubuntu18-ami"]
+  }
+
+  provisioner "shell" {
+    inline = [
       "sudo mkdir -p /etc/nebula",
       "cd /etc/nebula",
       "wget -q https://github.com/slackhq/nebula/releases/download/v1.7.2/nebula-linux-386.tar.gz",
@@ -338,7 +345,7 @@ build {
       "wget -q https://github.com/slackhq/nebula/releases/download/v1.7.2/nebula-linux-amd64.tar.gz",
       "tar -xvf nebula-linux-386.tar.gz",
     ]
-    only = ["amazon-ebs.centos7-ami"]
+    only = ["amazon-ebs.centos7-ami", "amazon-ebs.ubuntu18-ami"]
   }
 
   # TODO install this in the future
