@@ -294,7 +294,7 @@ build {
     inline_shebang   = "/bin/bash -e"
     environment_vars = ["DEBIAN_FRONTEND=noninteractive"]
     inline = [
-      "sudo DEBIAN_FRONTEND=noninteractive apt-get -y install python3 python-apt unzip jq",
+      "sudo DEBIAN_FRONTEND=noninteractive apt-get -y install python3 python-apt unzip jq wget",
       "sudo apt install -y python3-pip",
       "python3 -m pip install --upgrade pip",
       "python3 -m pip install boto3",
@@ -306,12 +306,62 @@ build {
   }
   provisioner "shell" {
     inline = [
-      "sudo yum install -y python python3.7 python3-pip unzip jq",
+      "sudo yum install -y python python3.7 python3-pip unzip jq wget",
       "python3 -m pip install --user --upgrade pip",
       "python3 -m pip install --user boto3"
     ]
     only = ["amazon-ebs.amazonlinux2-ami", "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami", "amazon-ebs.centos7-ami"]
   }
+
+  # install nebula dependencies
+  provisioner "shell" {
+    inline = [
+      "sudo yum install -y unzip wget"
+    ]
+    only = ["amazon-ebs.amazonlinux2-ami", "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami", "amazon-ebs.centos7-ami"]
+  }
+
+  provisioner "shell" {
+    inline = [
+      "sudo mkdir -p /etc/nebula",
+      "cd /etc/nebula",
+      "wget -q https://github.com/slackhq/nebula/releases/download/v1.7.2/nebula-linux-386.tar.gz",
+      "tar -xvf nebula-linux-386.tar.gz",
+    ]
+    only = ["amazon-ebs.amazonlinux2-ami", "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami"]
+  }
+
+  provisioner "shell" {
+    inline = [
+      "sudo mkdir -p /etc/nebula",
+      "cd /etc/nebula",
+      "wget -q https://github.com/slackhq/nebula/releases/download/v1.7.2/nebula-linux-amd64.tar.gz",
+      "tar -xvf nebula-linux-386.tar.gz",
+    ]
+    only = ["amazon-ebs.centos7-ami"]
+  }
+
+  # TODO install this in the future
+  # if [[ ! -e "$install_dir/nebula-cert" ]]; then
+  #   echo "nebula-cert does not exist, creating..."
+  #   if [[ "$arch" == "darwin" ]]; then
+  #     macos="true"
+  #     echo "This is macOS: $(uname)"
+  #     wget -q https://github.com/slackhq/nebula/releases/download/v1.7.2/nebula-darwin.zip
+  #     unzip -q nebula-darwin.zip
+  #   elif [[ "$arch" == "386" ]]; then
+  #     wget -q https://github.com/slackhq/nebula/releases/download/v1.7.2/nebula-linux-386.tar.gz
+  #     tar -xvf nebula-linux-386.tar.gz
+  #     rm nebula-linux-386.tar.gz
+  #   elif [[ "$arch" == "amd64" ]]; then
+  #     wget -q https://github.com/slackhq/nebula/releases/download/v1.7.2/nebula-linux-amd64.tar.gz
+  #     tar -xvf nebula-linux-amd64.tar.gz
+  #     rm nebula-linux-amd64.tar.gz
+  #   else
+  #     echo "Unknown arch: $arch"
+  #     exit 1
+  #   fi
+  # fi
 
   provisioner "shell" {
     inline_shebang   = "/bin/bash -e"
