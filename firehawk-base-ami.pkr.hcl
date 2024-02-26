@@ -330,18 +330,6 @@ build {
     only = ["amazon-ebs.ubuntu18-ami"]
   }
 
-  provisioner "shell" {
-    inline_shebang   = "/bin/bash -e"
-    inline = [
-      "echo \"Installing Nebula...\"",
-      "set -x; sudo mkdir -p /etc/nebula", # this fails
-      "set -x; sudo chmod 777 /etc/nebula",
-      "set -x; cd /etc/nebula",
-      "set -x; sudo wget -q https://github.com/slackhq/nebula/releases/download/v1.7.2/nebula-linux-amd64.tar.gz",
-      "set -x; sudo tar -xvf nebula-linux-amd64.tar.gz"
-    ]
-    only = ["amazon-ebs.amazonlinux2-ami", "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami"]
-  }
 
   provisioner "shell" {
     inline_shebang   = "/bin/bash -e"
@@ -351,32 +339,18 @@ build {
       "set -x; sudo chmod 777 /etc/nebula",
       "set -x; cd /etc/nebula",
       "set -x; sudo wget -q https://github.com/slackhq/nebula/releases/download/v1.7.2/nebula-linux-amd64.tar.gz",
-      "set -x; sudo tar -xvf nebula-linux-amd64.tar.gz"
+      "set -x; sudo tar -xvf nebula-linux-amd64.tar.gz",
+      "set -x; sudo rm -f nebula-linux-amd64.tar.gz",
+      "set -x; sudo chmod 700 /etc/nebula/nebula-cert",
+      "set -x; sudo chmod 700 /etc/nebula/nebula",
     ]
-    only = ["amazon-ebs.centos7-ami", "amazon-ebs.ubuntu18-ami"]
+    only = [
+      "amazon-ebs.centos7-ami",
+      "amazon-ebs.ubuntu18-ami",
+      "amazon-ebs.amazonlinux2-ami",
+      "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami"
+    ]
   }
-
-  # TODO install this in the future
-  # if [[ ! -e "$install_dir/nebula-cert" ]]; then
-  #   echo "nebula-cert does not exist, creating..."
-  #   if [[ "$arch" == "darwin" ]]; then
-  #     macos="true"
-  #     echo "This is macOS: $(uname)"
-  #     wget -q https://github.com/slackhq/nebula/releases/download/v1.7.2/nebula-darwin.zip
-  #     unzip -q nebula-darwin.zip
-  #   elif [[ "$arch" == "386" ]]; then
-  #     wget -q https://github.com/slackhq/nebula/releases/download/v1.7.2/nebula-linux-386.tar.gz
-  #     tar -xvf nebula-linux-386.tar.gz
-  #     rm nebula-linux-386.tar.gz
-  #   elif [[ "$arch" == "amd64" ]]; then
-  #     wget -q https://github.com/slackhq/nebula/releases/download/v1.7.2/nebula-linux-amd64.tar.gz
-  #     tar -xvf nebula-linux-amd64.tar.gz
-  #     rm nebula-linux-amd64.tar.gz
-  #   else
-  #     echo "Unknown arch: $arch"
-  #     exit 1
-  #   fi
-  # fi
 
   provisioner "shell" {
     inline_shebang   = "/bin/bash -e"
