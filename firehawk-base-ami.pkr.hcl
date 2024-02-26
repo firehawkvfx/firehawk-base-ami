@@ -335,9 +335,10 @@ build {
     inline = [
       "echo \"Installing Nebula...\"",
       "set -x; sudo mkdir -p /etc/nebula", # this fails
+      "set -x; sudo chmod 777 /etc/nebula",
       "set -x; cd /etc/nebula",
-      "set -x; wget -q https://github.com/slackhq/nebula/releases/download/v1.7.2/nebula-linux-amd64.tar.gz",
-      "set -x; tar -xvf nebula-linux-amd64.tar.gz"
+      "set -x; sudo wget -q https://github.com/slackhq/nebula/releases/download/v1.7.2/nebula-linux-amd64.tar.gz",
+      "set -x; sudo tar -xvf nebula-linux-amd64.tar.gz"
     ]
     only = ["amazon-ebs.amazonlinux2-ami", "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami"]
   }
@@ -347,9 +348,10 @@ build {
     inline = [
       "echo \"Installing Nebula...\"",
       "set -x; sudo mkdir -p /etc/nebula",
+      "set -x; sudo chmod 777 /etc/nebula",
       "set -x; cd /etc/nebula",
-      "set -x; wget -q https://github.com/slackhq/nebula/releases/download/v1.7.2/nebula-linux-amd64.tar.gz",
-      "set -x; tar -xvf nebula-linux-amd64.tar.gz"
+      "set -x; sudo wget -q https://github.com/slackhq/nebula/releases/download/v1.7.2/nebula-linux-amd64.tar.gz",
+      "set -x; sudo tar -xvf nebula-linux-amd64.tar.gz"
     ]
     only = ["amazon-ebs.centos7-ami", "amazon-ebs.ubuntu18-ami"]
   }
