@@ -330,29 +330,29 @@ build {
     only = ["amazon-ebs.ubuntu18-ami"]
   }
 
-  # provisioner "shell" {
-  #   inline_shebang   = "/bin/bash -e"
-  #   inline = [
-  #     "echo \"Installing Nebula...\"",
-  #     "sudo mkdir -p /etc/nebula", # this fails
-  #     "cd /etc/nebula",
-  #     "wget -q https://github.com/slackhq/nebula/releases/download/v1.7.2/nebula-linux-386.tar.gz",
-  #     "tar -xvf nebula-linux-386.tar.gz"
-  #   ]
-  #   only = ["amazon-ebs.amazonlinux2-ami", "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami"]
-  # }
+  provisioner "shell" {
+    inline_shebang   = "/bin/bash -e"
+    inline = [
+      "echo \"Installing Nebula...\"",
+      "set -x; sudo mkdir -p /etc/nebula", # this fails
+      "set -x; cd /etc/nebula",
+      "set -x; wget -q https://github.com/slackhq/nebula/releases/download/v1.7.2/nebula-linux-amd64.tar.gz",
+      "set -x; tar -xvf nebula-linux-amd64.tar.gz"
+    ]
+    only = ["amazon-ebs.amazonlinux2-ami", "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami"]
+  }
 
-  # provisioner "shell" {
-  #   inline_shebang   = "/bin/bash -e"
-  #   inline = [
-  #     "echo \"Installing Nebula...\"",
-  #     "sudo mkdir -p /etc/nebula",
-  #     "cd /etc/nebula",
-  #     "wget -q https://github.com/slackhq/nebula/releases/download/v1.7.2/nebula-linux-amd64.tar.gz",
-  #     "tar -xvf nebula-linux-386.tar.gz"
-  #   ]
-  #   only = ["amazon-ebs.centos7-ami", "amazon-ebs.ubuntu18-ami"]
-  # }
+  provisioner "shell" {
+    inline_shebang   = "/bin/bash -e"
+    inline = [
+      "echo \"Installing Nebula...\"",
+      "set -x; sudo mkdir -p /etc/nebula",
+      "set -x; cd /etc/nebula",
+      "set -x; wget -q https://github.com/slackhq/nebula/releases/download/v1.7.2/nebula-linux-amd64.tar.gz",
+      "set -x; tar -xvf nebula-linux-amd64.tar.gz"
+    ]
+    only = ["amazon-ebs.centos7-ami", "amazon-ebs.ubuntu18-ami"]
+  }
 
   # TODO install this in the future
   # if [[ ! -e "$install_dir/nebula-cert" ]]; then
