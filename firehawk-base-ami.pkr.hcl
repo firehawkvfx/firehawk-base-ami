@@ -317,7 +317,7 @@ build {
   provisioner "shell" {
     inline_shebang   = "/bin/bash -e"
     inline = [
-      "sudo yum install -y unzip wget"
+      "sudo yum install -y unzip wget nmap-ncat"
     ]
     only = ["amazon-ebs.amazonlinux2-ami", "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami", "amazon-ebs.centos7-ami"]
   }
@@ -325,7 +325,7 @@ build {
   provisioner "shell" {
     inline_shebang   = "/bin/bash -e"
     inline = [
-      "sudo apt-get install -y unzip wget"
+      "sudo apt-get install -y unzip wget netcat-openbsd"
     ]
     only = ["amazon-ebs.ubuntu18-ami"]
   }
