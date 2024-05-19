@@ -306,7 +306,7 @@ build {
   }
   provisioner "shell" {
     inline = [
-      "sudo yum install -y python python3.7 python3-pip unzip jq wget",
+      "sudo yum install -y python python3.10 python3-pip unzip jq wget",
       "python3 -m pip install --user --upgrade pip",
       "python3 -m pip install --user boto3"
     ]
