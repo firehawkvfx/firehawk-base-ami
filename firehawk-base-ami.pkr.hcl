@@ -1,7 +1,7 @@
-# The base AMI's primary purpose is to produce an anchor point with apt-get/yum updates, and apply bug fixes to incoming AMI's.
+# The base AMI's primary purpose is to produce an anchor point with apt-get/dnf updates, and apply bug fixes to incoming AMI's.
 # Updates can be unstable on a daily basis so the base ami once successful can be reused, improving build time.
 # Avoiding updates altogether is not good for security and some packages and executables depend on updates to function, so the update process is run initially here.
-# Some AMI's may require fixes to resolves bugs which are also performed here (Centos 7, Open VPN).
+# Some AMI's may require fixes to resolves bugs which are also performed here (Rocky 8, Open VPN).
 # We also install any packages that will not likely require frequent modification (Python, Git).  If they do require significant/frequent/unreliable modification they do not belong here.
 
 
@@ -97,20 +97,20 @@ source "amazon-ebs" "amazonlinux2-nicedcv-nvidia-ami" {
 #   --query 'sort_by(Images, &Name)[-1].ImageId' \
 #   --output text
 
-source "amazon-ebs" "centos7-ami" {
+source "amazon-ebs" "rocky8-ami" {
   tags = merge(
-    { "packer_source" : "amazon-ebs.centos7-ami" },
-    { "Name" : "centos7_base_ami" },
-    { "ami_role" : "centos7_base_ami" },
+    { "packer_source" : "amazon-ebs.rocky8-ami" },
+    { "Name" : "rocky8_base_ami" },
+    { "ami_role" : "rocky8_base_ami" },
     local.common_ami_tags
   )
   ami_description = "A Cent OS 7 AMI with basic updates."
-  ami_name        = "firehawk-base-centos7-${local.timestamp}-{{uuid}}"
+  ami_name        = "firehawk-base-rocky8-${local.timestamp}-{{uuid}}"
   instance_type   = "t2.micro"
   region          = var.aws_region
   source_ami_filter {
     filters = {
-      name             = "CentOS-7-*-*.x86_64-*"
+      name             = "Rocky-8-EC2-Base-8.9*"
       architecture     = "x86_64"
       root-device-type = "ebs"
       # product-code = "aw0evgkw8e5c1q413zgy5pjce"
@@ -118,8 +118,8 @@ source "amazon-ebs" "centos7-ami" {
     most_recent = true
     owners      = ["679593333241"]
   }
-  user_data_file = "${local.template_dir}/cloud-init.yaml" # This is a fix for some instance types with Centos 7 and mounts causing errors.
-  ssh_username   = "centos"
+  user_data_file = "${local.template_dir}/cloud-init.yaml" # This is a fix for some instance types with Rocky 8 and mounts causing errors.
+  ssh_username   = "rocky"
 
 }
 
@@ -182,7 +182,7 @@ build {
     "source.amazon-ebs.ubuntu18-ami",
     "source.amazon-ebs.amazonlinux2-ami",
     "source.amazon-ebs.amazonlinux2-nicedcv-nvidia-ami",
-    "source.amazon-ebs.centos7-ami",
+    "source.amazon-ebs.rocky8-ami",
     "source.amazon-ebs.base-openvpn-server-ami",
   ]
 
@@ -259,30 +259,30 @@ build {
     inline_shebang   = "/bin/bash -e"
     environment_vars = ["DEBIAN_FRONTEND=noninteractive"]
     inline = [
-      "sudo yum update -y"
+      "sudo dnf update -y"
     ]
-    only = ["amazon-ebs.amazonlinux2-ami", "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami", "amazon-ebs.centos7-ami"]
+    only = ["amazon-ebs.amazonlinux2-ami", "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami", "amazon-ebs.rocky8-ami"]
   }
 
   ### GIT ###
 
   provisioner "shell" {
     inline = [
-      "sudo yum update -y",
+      "sudo dnf update -y",
       "sleep 5",
-      "export CENTOS_MAIN_VERSION=$(cat /etc/centos-release | awk -F 'release[ ]*' '{print $2}' | awk -F '.' '{print $1}')",
-      "echo $CENTOS_MAIN_VERSION",                                                         # output should be "6" or "7"
-      "sudo yum install -y https://repo.ius.io/ius-release-el$${CENTOS_MAIN_VERSION}.rpm", # Install IUS Repo and Epel-Release:
-      "sudo yum install -y epel-release",
-      "sudo yum erase -y git*", # re-install git:
-      "sudo yum install -y git-core",
+      "export ROCKY_MAIN_VERSION=$(cat /etc/rocky-release | awk -F 'release[ ]*' '{print $2}' | awk -F '.' '{print $1}')",
+      "echo $ROCKY_MAIN_VERSION",                                                         # output should be "6" or "7"
+      "sudo dnf install -y https://repo.ius.io/ius-release-el$${ROCKY_MAIN_VERSION}.rpm", # Install IUS Repo and Epel-Release:
+      "sudo dnf install -y epel-release",
+      "sudo dnf erase -y git*", # re-install git:
+      "sudo dnf install -y git-core",
       "git --version"
     ]
-    only = ["amazon-ebs.centos7-ami"]
+    only = ["amazon-ebs.rocky8-ami"]
   }
   provisioner "shell" {
     inline = [
-      "sudo yum install -y git",
+      "sudo dnf install -y git",
       "git --version"
     ]
     only = ["amazon-ebs.amazonlinux2-ami", "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami"]
@@ -306,20 +306,20 @@ build {
   }
   provisioner "shell" {
     inline = [
-      "sudo yum install -y python python3.10 python3-pip unzip jq wget",
+      "sudo dnf install -y python python3.10 python3-pip unzip jq wget",
       "python3 -m pip install --user --upgrade pip",
       "python3 -m pip install --user boto3"
     ]
-    only = ["amazon-ebs.amazonlinux2-ami", "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami", "amazon-ebs.centos7-ami"]
+    only = ["amazon-ebs.amazonlinux2-ami", "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami", "amazon-ebs.rocky8-ami"]
   }
 
   # install nebula dependencies
   provisioner "shell" {
     inline_shebang   = "/bin/bash -e"
     inline = [
-      "sudo yum install -y unzip wget nmap-ncat"
+      "sudo dnf install -y unzip wget nmap-ncat"
     ]
-    only = ["amazon-ebs.amazonlinux2-ami", "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami", "amazon-ebs.centos7-ami"]
+    only = ["amazon-ebs.amazonlinux2-ami", "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami", "amazon-ebs.rocky8-ami"]
   }
 
   provisioner "shell" {
@@ -346,7 +346,7 @@ build {
       "set -x; sudo chmod 700 /etc/nebula/nebula",
     ]
     only = [
-      "amazon-ebs.centos7-ami",
+      "amazon-ebs.rocky8-ami",
       "amazon-ebs.ubuntu18-ami",
       "amazon-ebs.amazonlinux2-ami",
       "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami"
@@ -359,7 +359,7 @@ build {
     ### AWS CLI
     inline = [
       # "python3 -m pip install --user --upgrade awscli",
-      "if [[ -n \"$(command -v yum)\" ]]; then sudo yum remove awscli -y; fi",         # uninstall AWS CLI v1
+      "if [[ -n \"$(command -v dnf)\" ]]; then sudo dnf remove awscli -y; fi",         # uninstall AWS CLI v1
       "if [[ -n \"$(command -v apt-get)\" ]]; then sudo apt-get remove awscli -y; fi", # uninstall AWS CLI v1
       "if sudo test -f /bin/aws; then sudo rm -f /bin/aws; fi",                        # Ensure AWS CLI v1 doesn't exist
       "curl \"https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.5.4.zip\" -o \"awscliv2.zip\"",
@@ -368,7 +368,7 @@ build {
       "aws --version"
     ]
     only = [
-      "amazon-ebs.centos7-ami",
+      "amazon-ebs.rocky8-ami",
       "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami", # already installed.  otherwise need to silence error
       "amazon-ebs.amazonlinux2-ami",
       "amazon-ebs.base-openvpn-server-ami",
@@ -381,9 +381,9 @@ build {
     inline_shebang   = "/bin/bash -e"
     environment_vars = ["DEBIAN_FRONTEND=noninteractive"]
     inline = [
-      "sudo yum install kernel -y"
+      "sudo dnf install kernel -y"
     ]
-    only = ["amazon-ebs.centos7-ami"]
+    only = ["amazon-ebs.rocky8-ami"]
   }
 
   ### Cleanup
