@@ -106,7 +106,7 @@ source "amazon-ebs" "rocky8-ami" {
   )
   ami_description = "A Cent OS 7 AMI with basic updates."
   ami_name        = "firehawk-base-rocky8-${local.timestamp}-{{uuid}}"
-  instance_type   = "t2.micro"
+  instance_type   = "t2.small"
   region          = var.aws_region
   source_ami_filter {
     filters = {
