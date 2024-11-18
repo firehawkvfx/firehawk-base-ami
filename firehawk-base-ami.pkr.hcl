@@ -272,7 +272,7 @@ build {
       "sleep 5",
       "export ROCKY_MAIN_VERSION=$(cat /etc/rocky-release | awk -F 'release[ ]*' '{print $2}' | awk -F '.' '{print $1}')",
       "echo $ROCKY_MAIN_VERSION",                                                         # output should be "6" or "7"
-      "sudo dnf install -y https://repo.ius.io/ius-release-el$${ROCKY_MAIN_VERSION}.rpm", # Install IUS Repo and Epel-Release:
+      # "sudo dnf install -y https://repo.ius.io/ius-release-el$${ROCKY_MAIN_VERSION}.rpm", # Install IUS Repo and Epel-Release: # TODO determine what loosing this in rocky will mean.
       "sudo dnf install -y epel-release",
       "sudo dnf erase -y git*", # re-install git:
       "sudo dnf install -y git-core",
