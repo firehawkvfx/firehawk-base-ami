@@ -37,21 +37,21 @@ locals {
   }
 }
 
-source "amazon-ebs" "amazonlinux2-ami" {
+source "amazon-ebs" "amznlnx2023-ami" {
   tags = merge(
-    { "packer_source" : "amazon-ebs.amazonlinux2-ami" },
-    { "Name" : "amazonlinux2_base_ami" },
-    { "ami_role" : "amazonlinux2_base_ami" },
+    { "packer_source" : "amazon-ebs.amznlnx2023-ami" },
+    { "Name" : "amznlnx2023_base_ami" },
+    { "ami_role" : "amznlnx2023_base_ami" },
   local.common_ami_tags)
   ami_description = "An Amazon Linux 2 AMI with basic updates."
-  ami_name        = "firehawk-base-amazonlinux2-${local.timestamp}-{{uuid}}"
+  ami_name        = "firehawk-base-amznlnx2023-${local.timestamp}-{{uuid}}"
   instance_type   = "t2.micro"
   region          = var.aws_region
   source_ami_filter {
     filters = {
       architecture                       = "x86_64"
       "block-device-mapping.volume-type" = "gp2"
-      name                               = "*amzn2-ami-hvm-*"
+      name                               = "al2023-ami-2023.6.*-x86_64"
       root-device-type                   = "ebs"
       virtualization-type                = "hvm"
     }
@@ -62,16 +62,16 @@ source "amazon-ebs" "amazonlinux2-ami" {
 
 }
 
-source "amazon-ebs" "amazonlinux2-nicedcv-nvidia-ami" {
+source "amazon-ebs" "amznlnx2023-nicedcv-nvidia-ami" {
   tags = merge(
-    { "packer_source" : "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami" },
-    { "Name" : "amazonlinux2_nicedcv_base_ami" },
-    { "ami_role" : "amazonlinux2_nicedcv_base_ami" },
+    { "packer_source" : "amazon-ebs.amznlnx2023-nicedcv-nvidia-ami" },
+    { "Name" : "amznlnx2023_nicedcv_base_ami" },
+    { "ami_role" : "amznlnx2023_nicedcv_base_ami" },
     local.common_ami_tags
   )
   ami_description = "A Graphical NICE DCV NVIDIA Amazon Linux 2 AMI with basic updates."
-  # ami_name        = "firehawk-amazonlinux2-nicedcv-nvidia-ami-${local.timestamp}-{{uuid}}"
-  ami_name = "firehawk-base-amazonlinux2-nicedcv-${local.timestamp}-{{uuid}}"
+  # ami_name        = "firehawk-amznlnx2023-nicedcv-nvidia-ami-${local.timestamp}-{{uuid}}"
+  ami_name = "firehawk-base-amznlnx2023-nicedcv-${local.timestamp}-{{uuid}}"
   # instance_type   = "g3s.xlarge" # Only required if testing a gpu.
   instance_type = "t2.micro"
   region        = var.aws_region
@@ -180,8 +180,8 @@ EOF
 build {
   sources = [
     "source.amazon-ebs.ubuntu18-ami",
-    "source.amazon-ebs.amazonlinux2-ami",
-    "source.amazon-ebs.amazonlinux2-nicedcv-nvidia-ami",
+    "source.amazon-ebs.amznlnx2023-ami",
+    "source.amazon-ebs.amznlnx2023-nicedcv-nvidia-ami",
     "source.amazon-ebs.rocky8-ami",
     "source.amazon-ebs.base-openvpn-server-ami",
   ]
@@ -261,7 +261,7 @@ build {
     inline = [
       "sudo dnf update -y"
     ]
-    only = ["amazon-ebs.amazonlinux2-ami", "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami", "amazon-ebs.rocky8-ami"]
+    only = ["amazon-ebs.amznlnx2023-ami", "amazon-ebs.amznlnx2023-nicedcv-nvidia-ami", "amazon-ebs.rocky8-ami"]
   }
 
   ### GIT ###
@@ -285,7 +285,7 @@ build {
       "sudo dnf install -y git",
       "git --version"
     ]
-    only = ["amazon-ebs.amazonlinux2-ami", "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami"]
+    only = ["amazon-ebs.amznlnx2023-ami", "amazon-ebs.amznlnx2023-nicedcv-nvidia-ami"]
   }
 
   ### Python 3 & PIP ###
@@ -312,7 +312,7 @@ build {
       # "python3.11 -m pip install --user requests --upgrade",
       "python3.11 -m pip install --user boto3"
     ]
-    only = ["amazon-ebs.amazonlinux2-ami", "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami", "amazon-ebs.rocky8-ami"]
+    only = ["amazon-ebs.amznlnx2023-ami", "amazon-ebs.amznlnx2023-nicedcv-nvidia-ami", "amazon-ebs.rocky8-ami"]
   }
 
   # install nebula dependencies
@@ -321,7 +321,7 @@ build {
     inline = [
       "sudo dnf install -y unzip wget nmap-ncat"
     ]
-    only = ["amazon-ebs.amazonlinux2-ami", "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami", "amazon-ebs.rocky8-ami"]
+    only = ["amazon-ebs.amznlnx2023-ami", "amazon-ebs.amznlnx2023-nicedcv-nvidia-ami", "amazon-ebs.rocky8-ami"]
   }
 
   provisioner "shell" {
@@ -350,8 +350,8 @@ build {
     only = [
       "amazon-ebs.rocky8-ami",
       "amazon-ebs.ubuntu18-ami",
-      "amazon-ebs.amazonlinux2-ami",
-      "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami"
+      "amazon-ebs.amznlnx2023-ami",
+      "amazon-ebs.amznlnx2023-nicedcv-nvidia-ami"
     ]
   }
 
@@ -371,8 +371,8 @@ build {
     ]
     only = [
       "amazon-ebs.rocky8-ami",
-      "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami", # already installed.  otherwise need to silence error
-      "amazon-ebs.amazonlinux2-ami",
+      "amazon-ebs.amznlnx2023-nicedcv-nvidia-ami", # already installed.  otherwise need to silence error
+      "amazon-ebs.amznlnx2023-ami",
       "amazon-ebs.base-openvpn-server-ami",
       "amazon-ebs.ubuntu18-ami"
     ]
