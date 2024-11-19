@@ -289,16 +289,17 @@ build {
   }
 
   ### Python 3 & PIP ###
+  # When updating python, pick a version for rocky first.  If it works, then try it on the others.
 
   provisioner "shell" {
     inline_shebang   = "/bin/bash -e"
     environment_vars = ["DEBIAN_FRONTEND=noninteractive"]
     inline = [
-      "sudo DEBIAN_FRONTEND=noninteractive apt-get -y install python3 python-apt unzip jq wget",
-      "sudo apt install -y python3-pip",
-      "python3 -m pip install --upgrade pip",
-      "python3 -m pip install boto3",
-      "python3 -m pip --version",
+      "sudo DEBIAN_FRONTEND=noninteractive apt-get -y install python3.11 python-apt unzip jq wget",
+      "sudo apt install -y python3.11-pip",
+      "python3.11 -m pip install --upgrade pip",
+      "python3.11 -m pip install boto3",
+      "python3.11 -m pip --version",
       "sudo DEBIAN_FRONTEND=noninteractive apt-get install -y git",
       "echo '...Finished bootstrapping'"
     ]
@@ -306,10 +307,10 @@ build {
   }
   provisioner "shell" {
     inline = [
-      "sudo dnf install -y python2 python3.11 python3-pip unzip jq wget", # may need 'python' and 'python3.10'
-      "python3 -m pip install --user --upgrade pip",
-      # "python3.10 -m pip install --user requests --upgrade",
-      "python3 -m pip install --user boto3"
+      "sudo dnf install -y python3.11 python3.11-pip unzip jq wget", # may need 'python' and 'python3.10'
+      "python3.11 -m pip install --user --upgrade pip",
+      # "python3.11 -m pip install --user requests --upgrade",
+      "python3.11 -m pip install --user boto3"
     ]
     only = ["amazon-ebs.amazonlinux2-ami", "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami", "amazon-ebs.rocky8-ami"]
   }
