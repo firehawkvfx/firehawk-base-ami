@@ -306,6 +306,8 @@ build {
   }
   provisioner "shell" {
     inline = [
+      "sudo dnf module enable -y python3.10",
+      "sudo dnf module enable -y python", # deprecate this line in the future
       "sudo dnf install -y python python3.10 python3-pip unzip jq wget",
       "python3 -m pip install --user --upgrade pip",
       "python3 -m pip install --user boto3"
