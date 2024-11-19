@@ -50,7 +50,7 @@ source "amazon-ebs" "amznlnx2023-ami" {
   source_ami_filter {
     filters = {
       architecture                       = "x86_64"
-      "block-device-mapping.volume-type" = "gp2"
+      "block-device-mapping.volume-type" = "gp3"
       name                               = "al2023-ami-2023.6.*-x86_64"
       root-device-type                   = "ebs"
       virtualization-type                = "hvm"
