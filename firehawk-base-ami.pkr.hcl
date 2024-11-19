@@ -43,10 +43,11 @@ source "amazon-ebs" "amznlnx2023-ami" {
     { "Name" : "amznlnx2023_base_ami" },
     { "ami_role" : "amznlnx2023_base_ami" },
   local.common_ami_tags)
-  ami_description = "An Amazon Linux 2 AMI with basic updates."
-  ami_name        = "firehawk-base-amznlnx2023-${local.timestamp}-{{uuid}}"
-  instance_type   = "t2.micro"
-  region          = var.aws_region
+  ami_description         = "An Amazon Linux 2 AMI with basic updates."
+  ami_name                = "firehawk-base-amznlnx2023-${local.timestamp}-{{uuid}}"
+  temporary_key_pair_type = "ed25519"
+  instance_type           = "t2.micro"
+  region                  = var.aws_region
   source_ami_filter {
     filters = {
       architecture                       = "x86_64"
@@ -271,7 +272,7 @@ build {
       "sudo dnf update -y",
       "sleep 5",
       "export ROCKY_MAIN_VERSION=$(cat /etc/rocky-release | awk -F 'release[ ]*' '{print $2}' | awk -F '.' '{print $1}')",
-      "echo $ROCKY_MAIN_VERSION",                                                         # output should be "6" or "7"
+      "echo $ROCKY_MAIN_VERSION", # output should be "6" or "7"
       # "sudo dnf install -y https://repo.ius.io/ius-release-el$${ROCKY_MAIN_VERSION}.rpm", # Install IUS Repo and Epel-Release: # TODO determine what loosing this in rocky will mean.
       "sudo dnf install -y epel-release",
       "sudo dnf erase -y git*", # re-install git:
@@ -317,7 +318,7 @@ build {
 
   # install nebula dependencies
   provisioner "shell" {
-    inline_shebang   = "/bin/bash -e"
+    inline_shebang = "/bin/bash -e"
     inline = [
       "sudo dnf install -y unzip wget nmap-ncat"
     ]
@@ -325,7 +326,7 @@ build {
   }
 
   provisioner "shell" {
-    inline_shebang   = "/bin/bash -e"
+    inline_shebang = "/bin/bash -e"
     inline = [
       "sudo apt-get install -y unzip wget netcat-openbsd"
     ]
@@ -334,7 +335,7 @@ build {
 
 
   provisioner "shell" {
-    inline_shebang   = "/bin/bash -e"
+    inline_shebang = "/bin/bash -e"
     inline = [
       "echo \"Installing Nebula...\"",
       "set -x; sudo mkdir -p /etc/nebula",
