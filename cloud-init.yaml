@@ -12,7 +12,7 @@
 #
 # Partially derived from:
 # * pakdel's sketch of a network service remediation script in https://bugs.centos.org/view.php?id=13836
-# * ldennison's comment in https://bugs.centos.org/view.php?id=14760 
+# * ldennison's comment in https://bugs.centos.org/view.php?id=14760
 # * hhsnow's comment in https://bugs.centos.org/view.php?id=14107
 # * the cloud-init config in https://docs.aws.amazon.com/vpc/latest/userguide/vpc-migrate-ipv6.html#vpc-migrate-ipv6-instance-types
 #
@@ -20,7 +20,7 @@
 # instance on 2019-05-19
 #
 # Author:
-#    Richard Bullington-Mcguire <rbulling@obscure.org> / @obscurerichard 
+#    Richard Bullington-Mcguire <rbulling@obscure.org> / @obscurerichard
 #
 # Copyright (C) 2019 by The Obscure Organization
 # MIT licensed. See the LICENSE file for details.
@@ -45,4 +45,4 @@ bootcmd:
         kill $(<PATH_DHCLIENT_PID) || true
         rm -f "$PATH_DHCLIENT_PID"
     done
-    systemctl restart network
+    systemctl restart NetworkManager # Rocky Linux 8

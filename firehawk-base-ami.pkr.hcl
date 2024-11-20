@@ -421,7 +421,7 @@ build {
     ]
   }
 
-  # Upgrade kernel for centos 7 - may be needed for Nebula to function
+  # Upgrade kernel for rocky 8 - may be needed for Nebula to function
   provisioner "shell" {
     inline_shebang   = "/bin/bash -e"
     environment_vars = ["DEBIAN_FRONTEND=noninteractive"]
