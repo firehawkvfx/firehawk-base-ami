@@ -113,7 +113,7 @@ source "amazon-ebs" "rocky8-ami" {
     { "ami_role" : "rocky8_base_ami" },
     local.common_ami_tags
   )
-  ami_description = "A Cent OS 7 AMI with basic updates."
+  ami_description = "A Rocky 8 AMI with basic updates."
   ami_name        = "firehawk-base-rocky8-${local.timestamp}-{{uuid}}"
   instance_type   = "t2.small"
   region          = var.aws_region
@@ -352,6 +352,7 @@ build {
     inline = [
       "sudo dnf install -y python3.11 python3.11-pip unzip jq wget", # may need 'python' and 'python3.10'
       "python3.11 -m pip install --user --upgrade pip",
+      "set -x; python3.11 -m pip install requests",  # required for houdini install script
       # "python3.11 -m pip install --user requests --upgrade",
       "python3.11 -m pip install --user boto3"
     ]
