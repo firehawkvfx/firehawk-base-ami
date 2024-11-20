@@ -300,11 +300,41 @@ build {
   ### Python 3 & PIP ###
   # When updating python, pick a version for rocky first.  If it works, then try it on the others.
 
+
+
+# Ubuntu 18.04 needs to install python3.11 from source
   provisioner "shell" {
     inline_shebang   = "/bin/bash -e"
     environment_vars = ["DEBIAN_FRONTEND=noninteractive"]
     inline = [
-      "sudo DEBIAN_FRONTEND=noninteractive apt-get -y install python3.11 python-apt unzip jq wget",
+      "sudo apt install -y build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev curl libbz2-dev",
+      "curl -O https://www.python.org/ftp/python/3.11.0/Python-3.11.0.tgz",
+      "tar -xf Python-3.11.0.tgz",
+      "cd Python-3.11.0",
+      "./configure --enable-optimizations",
+      "make -j $(nproc)",
+      "sudo make altinstall",
+      "python3.11 --version",
+    ]
+    only = ["amazon-ebs.ubuntu18-ami"]
+  }
+
+# VPn may not require install from source
+  provisioner "shell" {
+    inline_shebang   = "/bin/bash -e"
+    environment_vars = ["DEBIAN_FRONTEND=noninteractive"]
+    inline = [
+      "sudo DEBIAN_FRONTEND=noninteractive apt-get -y install python3.11 ",
+      "sudo apt install -y python3.11-pip",
+    ]
+    only = ["amazon-ebs.base-openvpn-server-ami"]
+  }
+
+  provisioner "shell" {
+    inline_shebang   = "/bin/bash -e"
+    environment_vars = ["DEBIAN_FRONTEND=noninteractive"]
+    inline = [
+      "sudo DEBIAN_FRONTEND=noninteractive apt-get -y install python-apt unzip jq wget",
       "sudo apt install -y python3.11-pip",
       "python3.11 -m pip install --upgrade pip",
       "python3.11 -m pip install boto3",
