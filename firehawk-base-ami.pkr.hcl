@@ -315,6 +315,11 @@ build {
       "make -j $(nproc)",
       "sudo make altinstall",
       "python3.11 --version",
+      "cd ~",
+      "curl -O https://bootstrap.pypa.io/get-pip.py", # Install pip for py3.11
+      "python3.11 get-pip.py",
+      "python3.11 -m pip --version",
+      "python3.11 -m pip install --upgrade pip"
     ]
     only = ["amazon-ebs.ubuntu18-ami"]
   }
@@ -335,7 +340,6 @@ build {
     environment_vars = ["DEBIAN_FRONTEND=noninteractive"]
     inline = [
       "sudo DEBIAN_FRONTEND=noninteractive apt-get -y install python-apt unzip jq wget",
-      "sudo apt install -y python3.11-pip",
       "python3.11 -m pip install --upgrade pip",
       "python3.11 -m pip install boto3",
       "python3.11 -m pip --version",
