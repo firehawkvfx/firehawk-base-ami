@@ -351,6 +351,10 @@ build {
   provisioner "shell" {
     inline = [
       "sudo dnf install -y python3.11 unzip jq wget", # may need 'python' and 'python3.10' abd 'python3.11-pip'
+      "sudo groupadd -g 9003 syscontrol", # TODO add a var for this
+      "sudo usermod -aG syscontrol $(whoami)",
+      "sudo chown -R :syscontrol /usr/lib/python3.11",
+      "sudo chmod -R g+rwX /usr/lib/python3.11", # consider /usr/lib/python3.11/site-packages
       "cd ~",
       "curl -O https://bootstrap.pypa.io/get-pip.py", # Install pip for py3.11
       "python3.11 get-pip.py",
@@ -362,6 +366,7 @@ build {
       "python3.11 -m pip install boto3",
       "python3.11 -m pip --version",
       "echo 'check site-packages permissions'; ls -ld /usr/lib/python3.11/site-packages",
+      "python3.11 -c \"import requests; print('requests module is available to current user'); print(requests.__file__)\"",
       # "python3.11 -m pip install --user boto3"
     ]
     only = ["amazon-ebs.amznlnx2023-ami", "amazon-ebs.amznlnx2023-nicedcv-nvidia-ami", "amazon-ebs.rocky8-ami"]
