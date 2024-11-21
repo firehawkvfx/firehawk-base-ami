@@ -350,11 +350,18 @@ build {
   }
   provisioner "shell" {
     inline = [
-      "sudo dnf install -y python3.11 python3.11-pip unzip jq wget", # may need 'python' and 'python3.10'
-      "python3.11 -m pip install --user --upgrade pip",
-      "set -x; python3.11 -m pip install requests",  # required for houdini install script
+      "sudo dnf install -y python3.11 unzip jq wget", # may need 'python' and 'python3.10' abd 'python3.11-pip'
+      "cd ~",
+      "curl -O https://bootstrap.pypa.io/get-pip.py", # Install pip for py3.11
+      "python3.11 get-pip.py",
+      "python3.11 -m pip --version",
+      "python3.11 -m pip install --upgrade pip",
+      # "python3.11 -m pip install --user --upgrade pip",
+      "set -x; python3.11 -m pip install requests --upgrade",  # required for houdini install script
       # "python3.11 -m pip install --user requests --upgrade",
-      "python3.11 -m pip install --user boto3"
+      "python3.11 -m pip install boto3",
+      "python3.11 -m pip --version",
+      # "python3.11 -m pip install --user boto3"
     ]
     only = ["amazon-ebs.amznlnx2023-ami", "amazon-ebs.amznlnx2023-nicedcv-nvidia-ami", "amazon-ebs.rocky8-ami"]
   }
