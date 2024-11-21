@@ -355,12 +355,14 @@ build {
       "sudo groupadd -g 9003 syscontrol", # TODO add a var for this
       "sudo usermod -aG syscontrol $(whoami)",
       "id -nG $(whoami) | grep -qw syscontrol && echo \"User is in syscontrol group\" || echo \"User is not in syscontrol group\"",
-      "sudo chown -R :syscontrol /usr/lib/python3.11", # multiple users need access to /usr/lib/python3.11/site-packages
-      "sudo chown :syscontrol /usr/lib",
-      "sudo chown :syscontrol /usr",
-      "sudo chmod -R g+rwX /usr/lib/python3.11", # consider /usr/lib/python3.11/site-packages
-      "sudo chmod -R g+rwX /usr/lib",
+      "sudo chown -R :syscontrol /usr",
       "sudo chmod -R g+rwX /usr",
+      "sudo chown -R :syscontrol /usr/lib",
+      "sudo chmod -R g+rwX /usr/lib",
+      "sudo chown -R :syscontrol /usr/lib/python3.11",
+      "sudo chmod -R g+rwX /usr/lib/python3.11",
+      "sudo chown -R :syscontrol /usr/lib/python3.11/site-packages",
+      "sudo chmod -R g+rwX /usr/lib/python3.11/site-packages",
       "python3.11 -c \"import site; print(site.getsitepackages())\"",
       # "sudo chmod -R u+rwX /usr/lib/python3.11/site-packages",
       # "sudo chmod -R u+rwX /usr/lib/python3.11/site-packages",
