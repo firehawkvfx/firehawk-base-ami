@@ -354,6 +354,7 @@ build {
       "echo 'creating syscontrol group'",
       "sudo groupadd -g 9003 syscontrol", # TODO add a var for this
       "sudo usermod -aG syscontrol $(whoami)",
+      "sudo su - $USER", # relogin to get group permissions
       "id -nG $(whoami) | grep -qw syscontrol && echo \"User is in syscontrol group\" || echo \"User is not in syscontrol group\"",
       "sudo chown :syscontrol /usr",
       "sudo chmod g+rwX /usr",
