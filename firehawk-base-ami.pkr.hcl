@@ -354,11 +354,19 @@ build {
       "echo 'creating syscontrol group'",
       "sudo groupadd -g 9003 syscontrol", # TODO add a var for this
       "sudo usermod -aG syscontrol $(whoami)",
-      "sudo chown -R :syscontrol /usr/lib/python3.11", # multiple users need access to this.
+      "id -nG $(whoami) | grep -qw syscontrol && echo \"User is in syscontrol group\" || echo \"User is not in syscontrol group\"",
+      "sudo chown -R :syscontrol /usr/lib/python3.11", # multiple users need access to /usr/lib/python3.11/site-packages
+      "sudo chown :syscontrol /usr/lib",
+      "sudo chown :syscontrol /usr",
       "sudo chmod -R g+rwX /usr/lib/python3.11", # consider /usr/lib/python3.11/site-packages
+      "sudo chmod -R g+rwX /usr/lib",
+      "sudo chmod -R g+rwX /usr",
       "python3.11 -c \"import site; print(site.getsitepackages())\"",
-      "sudo chmod -R 775 /usr/lib/python3.11/site-packages",
+      # "sudo chmod -R u+rwX /usr/lib/python3.11/site-packages",
+      # "sudo chmod -R u+rwX /usr/lib/python3.11/site-packages",
       "echo 'check site-packages permissions'; ls -ld /usr/lib/python3.11/site-packages",
+      "touch /usr/lib/python3.11/site-packages/dummytestfile",
+      "rm /usr/lib/python3.11/site-packages/dummytestfile",
       "cd ~",
       "curl -O https://bootstrap.pypa.io/get-pip.py", # Install pip for py3.11
       "python3.11 get-pip.py",
