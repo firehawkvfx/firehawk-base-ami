@@ -361,6 +361,7 @@ build {
       # "python3.11 -m pip install --user requests --upgrade",
       "python3.11 -m pip install boto3",
       "python3.11 -m pip --version",
+      "echo 'check site-packages permissions'; ls -ld /usr/lib/python3.11/site-packages",
       # "python3.11 -m pip install --user boto3"
     ]
     only = ["amazon-ebs.amznlnx2023-ami", "amazon-ebs.amznlnx2023-nicedcv-nvidia-ami", "amazon-ebs.rocky8-ami"]
