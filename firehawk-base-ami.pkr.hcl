@@ -353,7 +353,7 @@ build {
       "sudo dnf install -y python3.11 unzip jq wget", # may need 'python' and 'python3.10' abd 'python3.11-pip'
       "sudo groupadd -g 9003 syscontrol", # TODO add a var for this
       "sudo usermod -aG syscontrol $(whoami)",
-      "sudo chown -R :syscontrol /usr/lib/python3.11",
+      "sudo chown -R :syscontrol /usr/lib/python3.11", # multiple users need access to this.
       "sudo chmod -R g+rwX /usr/lib/python3.11", # consider /usr/lib/python3.11/site-packages
       "cd ~",
       "curl -O https://bootstrap.pypa.io/get-pip.py", # Install pip for py3.11
