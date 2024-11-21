@@ -336,15 +336,28 @@ build {
   }
 
   provisioner "shell" {
+    inline_shebang = "/bin/bash -e"
     inline = [
+      # "sudo dnf install -y python3.11 unzip jq wget", # may need 'python' and 'python3.10' abd 'python3.11-pip'
+      "echo 'creating syscontrol group'",
+      "sudo groupadd -g 9003 syscontrol", # TODO add a var for this
+      "sudo usermod -aG syscontrol $(whoami)",
+    ]
+    only = ["amazon-ebs.amznlnx2023-ami", "amazon-ebs.amznlnx2023-nicedcv-nvidia-ami", "amazon-ebs.rocky8-ami"]
+  }
+
+  # TODO do not do this for public facing nodes.  This is a security risk.
+  provisioner "shell" {
+    inline = [
+      "echo 'disable selinux'",
       "sudo setenforce 0",                                                  # Temporarily disable SELinux
       "sudo sed -i 's/^SELINUX=.*$/SELINUX=disabled/' /etc/selinux/config", # Permanently disable SELinux
-      # "sudo reboot" # Reboot the system
+      "sudo reboot" # Reboot the system
     ]
     inline_shebang = "/bin/bash -e"
     only = [
       "amazon-ebs.rocky8-rendernode-ami",
-      "amazon-ebs.amznlnx2023-rendernode-ami",
+      "amazon-ebs.amazon-ebs.amznlnx2023-ami",
     ]
   }
 
@@ -360,17 +373,6 @@ build {
       "echo '...Finished bootstrapping'"
     ]
     only = ["amazon-ebs.ubuntu18-ami", "amazon-ebs.base-openvpn-server-ami"]
-  }
-
-  provisioner "shell" {
-    inline_shebang = "/bin/bash -e"
-    inline = [
-      # "sudo dnf install -y python3.11 unzip jq wget", # may need 'python' and 'python3.10' abd 'python3.11-pip'
-      "echo 'creating syscontrol group'",
-      "sudo groupadd -g 9003 syscontrol", # TODO add a var for this
-      "sudo usermod -aG syscontrol $(whoami)",
-    ]
-    only = ["amazon-ebs.amznlnx2023-ami", "amazon-ebs.amznlnx2023-nicedcv-nvidia-ami", "amazon-ebs.rocky8-ami"]
   }
 
   provisioner "shell" {
