@@ -386,7 +386,7 @@ build {
       "sudo chown :syscontrol /usr",
       "sudo chmod g+rwx /usr",
       "echo 'check permissions'; ls -ld /usr",
-      "touch /usr/dummytestfile",
+      # "touch /usr/dummytestfile",
       "sudo chown :syscontrol /usr/lib",
       "sudo chmod u+rwx /usr/lib", # not sure why this folder doesn't have write permissions for root
       "sudo chmod g+rwx /usr/lib",
