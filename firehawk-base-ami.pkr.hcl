@@ -302,7 +302,7 @@ build {
 
 
 
-# Ubuntu 18.04 needs to install python3.11 from source
+  # Ubuntu 18.04 needs to install python3.11 from source
   provisioner "shell" {
     inline_shebang   = "/bin/bash -e"
     environment_vars = ["DEBIAN_FRONTEND=noninteractive"]
@@ -324,7 +324,7 @@ build {
     only = ["amazon-ebs.ubuntu18-ami"]
   }
 
-# VPn may not require install from source
+  # VPn may not require install from source
   provisioner "shell" {
     inline_shebang   = "/bin/bash -e"
     environment_vars = ["DEBIAN_FRONTEND=noninteractive"]
@@ -333,6 +333,19 @@ build {
       "sudo apt install -y python3.11-pip",
     ]
     only = ["amazon-ebs.base-openvpn-server-ami"]
+  }
+
+  provisioner "shell" {
+    inline = [
+      "sudo setenforce 0",                                                  # Temporarily disable SELinux
+      "sudo sed -i 's/^SELINUX=.*$/SELINUX=disabled/' /etc/selinux/config", # Permanently disable SELinux
+      # "sudo reboot" # Reboot the system
+    ]
+    inline_shebang = "/bin/bash -e"
+    only = [
+      "amazon-ebs.rocky8-rendernode-ami",
+      "amazon-ebs.amznlnx2023-rendernode-ami",
+    ]
   }
 
   provisioner "shell" {
@@ -395,7 +408,7 @@ build {
       "python3.11 -m pip --version",
       "python3.11 -m pip install --upgrade pip",
       # "python3.11 -m pip install --user --upgrade pip",
-      "set -x; python3.11 -m pip install requests --upgrade",  # required for houdini install script
+      "set -x; python3.11 -m pip install requests --upgrade", # required for houdini install script
       # "python3.11 -m pip install --user requests --upgrade",
       "python3.11 -m pip install boto3",
       "python3.11 -m pip --version",
