@@ -378,44 +378,15 @@ build {
   provisioner "shell" {
     inline = [
       "sudo dnf install -y python3.11 unzip jq wget", # may need 'python' and 'python3.10' abd 'python3.11-pip'
-      # "echo 'creating syscontrol group'",
-      # "sudo groupadd -g 9003 syscontrol", # TODO add a var for this
-      # "sudo usermod -aG syscontrol $(whoami)",
-      # "sudo su - $USER", # relogin to get group permissions
-      "id -nG $(whoami) | grep -qw syscontrol && echo \"User is in syscontrol group\" || echo \"User is not in syscontrol group\"",
-      "sudo chown :syscontrol /usr",
-      "sudo chmod g+rwx /usr",
-      "echo 'check permissions'; ls -ld /usr",
-      # "touch /usr/dummytestfile",
-      "sudo chown :syscontrol /usr/lib",
-      "sudo chmod u+rwx /usr/lib", # not sure why this folder doesn't have write permissions for root
-      "sudo chmod g+rwx /usr/lib",
-      "echo 'check permissions'; ls -ld /usr/lib",
-      "touch /usr/lib/dummytestfile",
-      "sudo chown -R :syscontrol /usr/lib/python3.11",
-      "sudo chmod -R g+rwX /usr/lib/python3.11",
-      "echo 'check permissions'; ls -ld /usr/lib/python3.11",
-      "touch /usr/lib/python3.11/dummytestfile",
-      "sudo chown -R :syscontrol /usr/lib/python3.11/site-packages",
-      "sudo chmod -R g+rwX /usr/lib/python3.11/site-packages",
-      "echo 'check permissions'; ls -ld /usr/lib/python3.11/site-packages",
-      "touch /usr/lib/python3.11/site-packages/dummytestfile",
-      "python3.11 -c \"import site; print(site.getsitepackages())\"",
-      # "sudo chmod -R u+rwX /usr/lib/python3.11/site-packages",
-      # "sudo chmod -R u+rwX /usr/lib/python3.11/site-packages",
-      "rm /usr/lib/python3.11/site-packages/dummytestfile",
+      "python3.11 -c \"import site; print('Site packages locations:', site.getsitepackages())\"",
       "cd ~",
       "curl -O https://bootstrap.pypa.io/get-pip.py", # Install pip for py3.11
       "python3.11 get-pip.py",
       "python3.11 -m pip --version",
-      "python3.11 -m pip install --upgrade pip",
-      # "python3.11 -m pip install --user --upgrade pip",
-      "set -x; python3.11 -m pip install requests --upgrade", # required for houdini install script
-      # "python3.11 -m pip install --user requests --upgrade",
-      "python3.11 -m pip install boto3",
-      "python3.11 -m pip --version",
-      "python3.11 -c \"import requests; print('requests module is available to current user'); print(requests.__file__)\"",
-      # "python3.11 -m pip install --user boto3"
+      "python3.11 -m pip install --user --upgrade pip",
+      "set -x; python3.11 -m pip install requests --user --upgrade", # required for houdini install script
+      "python3.11 -m pip install --user boto3",
+      "python3.11 -c \"import requests; print('requests module is available to current user'); print('location:', requests.__file__)\"",
     ]
     only = ["amazon-ebs.amznlnx2023-ami", "amazon-ebs.amznlnx2023-nicedcv-nvidia-ami", "amazon-ebs.rocky8-ami"]
   }
