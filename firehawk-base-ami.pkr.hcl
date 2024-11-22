@@ -60,7 +60,8 @@ source "amazon-ebs" "amznlnx2023-ami" {
     filters = {
       architecture                       = "x86_64"
       "block-device-mapping.volume-type" = "gp3"
-      name                               = "al2023-ami-2023.6.*-x86_64"
+      # al2023-ami-2023.6.20241121.0-kernel-6.1-x86_64
+      name                               = "al2023-ami-2023.6.20241121.*-x86_64"
       root-device-type                   = "ebs"
       virtualization-type                = "hvm"
     }
@@ -344,21 +345,6 @@ build {
       "sudo usermod -aG syscontrol $(whoami)",
     ]
     only = ["amazon-ebs.amznlnx2023-ami", "amazon-ebs.amznlnx2023-nicedcv-nvidia-ami", "amazon-ebs.rocky8-ami"]
-  }
-
-  # TODO do not do this for public facing nodes.  This is a security risk.
-  provisioner "shell" {
-    inline = [
-      "echo 'disable selinux'",
-      "sudo setenforce 0",                                                  # Temporarily disable SELinux
-      "sudo sed -i 's/^SELINUX=.*$/SELINUX=disabled/' /etc/selinux/config", # Permanently disable SELinux
-      "sudo reboot" # Reboot the system
-    ]
-    inline_shebang = "/bin/bash -e"
-    only = [
-      "amazon-ebs.rocky8-rendernode-ami",
-      "amazon-ebs.amazon-ebs.amznlnx2023-ami",
-    ]
   }
 
   provisioner "shell" {
