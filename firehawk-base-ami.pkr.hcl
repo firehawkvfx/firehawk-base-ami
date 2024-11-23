@@ -370,11 +370,15 @@ build {
       "python3.11 get-pip.py",
       "python3.11 -m pip --version",
       "python3.11 -m pip install --user --upgrade pip",
-      "set -x; python3.11 -m pip install requests --user --upgrade", # required for houdini install script
+      "python3.11 -m pip install requests --user --upgrade", # required for houdini install script
       "python3.11 -m pip install --user boto3",
       "python3.11 -c \"import requests; print('requests module is available to current user'); print('location:', requests.__file__)\"",
     ]
-    only = ["amazon-ebs.amznlnx2023-ami", "amazon-ebs.amznlnx2023-nicedcv-nvidia-ami", "amazon-ebs.rocky8-ami"]
+    only = [
+      "amazon-ebs.amznlnx2023-ami",
+      "amazon-ebs.amznlnx2023-nicedcv-nvidia-ami",
+      "amazon-ebs.rocky8-ami"
+    ]
   }
 
   # install nebula dependencies
