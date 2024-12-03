@@ -5,6 +5,7 @@
 # We also install any packages that will not likely require frequent modification (Python, Git).  If they do require significant/frequent/unreliable modification they do not belong here.
 
 packer {
+  required_version = ">= 1.11.2"
   required_plugins {
     amazon = {
       version = ">= 1.0.8"
