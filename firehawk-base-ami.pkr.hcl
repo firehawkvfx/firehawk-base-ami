@@ -61,8 +61,7 @@ source "amazon-ebs" "amznlnx2023-ami" {
     filters = {
       architecture                       = "x86_64"
       "block-device-mapping.volume-type" = "gp3"
-      # al2023-ami-2023.6.20241121.0-kernel-6.1-x86_64
-      name                               = "al2023-ami-2023.6.20241121.*-x86_64"
+      name                               = "al2023-ami-2023.6.20241212.*-x86_64"
       root-device-type                   = "ebs"
       virtualization-type                = "hvm"
     }
@@ -212,7 +211,7 @@ build {
       "sudo cat /var/log/cloud-init-output.log" # check cloud init log.
     ]
     only = [
-      "source.amazon-ebs.amznlnx2023-ami",
+      "amazon-ebs.amznlnx2023-ami",
     ]
   }
 
