@@ -212,7 +212,7 @@ build {
       "sudo cat /var/log/cloud-init-output.log" # check cloud init log.
     ]
     only = [
-      "amazon-ebs.amznlnx2023-rendernode-ami",
+      "source.amazon-ebs.amznlnx2023-ami",
     ]
   }
 
