@@ -68,7 +68,6 @@ source "amazon-ebs" "amznlnx2023-ami" {
     most_recent = true
     owners      = ["amazon"]
   }
-  user_data_file = "${local.template_dir}/cloud-init-amazonlinux.yaml" # This is a fix for the stack size limit in the Amazon Linux 2023 AMI.
   ssh_username = "ec2-user"
 }
 
@@ -207,6 +206,9 @@ build {
   provisioner "shell" {
     ### Houdini says stack size limit is not correct on amazon linux so we fix it here.
     inline = [
+      "sudo sed -i '/# End of file/i * soft stack 65536' /etc/security/limits.conf",
+      "sudo sed -i '/# End of file/i * hard stack 65536' /etc/security/limits.conf",
+      "echo 'Done setting up stack size'",
       "sudo cat /etc/security/limits.conf", # check stack size
       "sudo cat /var/log/cloud-init-output.log" # check cloud init log.
     ]
